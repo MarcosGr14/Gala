@@ -1,101 +1,114 @@
-import './css/variables.css'; 
-import { db } from './data/db.js';
-import { renderAdmin } from './views/admin.js';
-import { renderProfile } from './views/profile.js';
-import { renderRecords } from './views/records.js';
-import { renderGala } from './views/gala.js';
-import { getAllIdols, getAllGroups } from './services/artistService.js';
-
-async function initApp() {
-  const appElement = document.querySelector('#app');
-  
-  // 1. Estructura principal de la app con el nuevo Navbar (Home, Gala, Records, Admin)
-  appElement.innerHTML = `
-    <nav style="height: var(--nav-height); background: var(--color-surface); box-shadow: var(--shadow-sm); display: flex; align-items: center; padding: 0 var(--spacing-xl); gap: var(--spacing-md); position: sticky; top: 0; z-index: 100;">
-      <h2 style="font-family: var(--font-display); color: var(--color-primary); margin: 0; cursor: pointer;" id="nav-home">KPop Gala</h2>
-      <div style="flex-grow: 1;"></div>
-      <button id="nav-gala" style="background: none; border: none; font-family: var(--font-body); font-weight: bold; color: var(--color-primary); cursor: pointer; padding: 8px 16px;">GALA</button>
-      <button id="nav-records" style="background: none; border: none; font-family: var(--font-body); font-weight: bold; color: var(--text-secondary); cursor: pointer; padding: 8px 16px;">RECORDS</button>
-      <button id="nav-admin" style="background: none; border: none; font-family: var(--font-body); font-weight: bold; color: var(--text-secondary); cursor: pointer; padding: 8px 16px;">ADMIN</button>
-    </nav>
-    <main id="view-container" style="min-height: calc(100vh - var(--nav-height)); background: var(--color-bg);"></main>
-  `;
-
-  const viewContainer = document.querySelector('#view-container');
-
-  // 2. Enrutador interno (SPA)
-  const navigateTo = async (view, params = {}) => {
-    // Estado de carga temporal
-    viewContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">Loading...</div>';
-    
-    if (view === 'home') {
-      const idols = await getAllIdols();
-      const groups = await getAllGroups();
-      
-      let html = `<div style="padding: var(--spacing-xl); max-width: 1200px; margin: 0 auto;">
-        <h1 style="font-family: var(--font-display); color: var(--color-primary); text-align: center; margin-bottom: var(--spacing-xl);">Hall of Fame Directory</h1>
-      `;
-
-      const renderCard = (entity, type) => `
-        <div class="artist-card" data-id="${entity.id}" data-type="${type}" style="background: var(--color-surface); padding: var(--spacing-md); border-radius: var(--radius-card); box-shadow: var(--shadow-sm); cursor: pointer; text-align: center; transition: transform 0.2s;">
-          <div style="width: 100px; height: 100px; border-radius: 50%; background-color: #eee; margin: 0 auto 10px auto; background-image: url('${entity.photo}'); background-size: cover; background-position: center;"></div>
-          <h3 style="margin: 0; color: var(--text-primary);">${type === 'idol' ? entity.stageName : entity.name}</h3>
-          <span style="color: var(--text-secondary); font-size: 0.8em; text-transform: uppercase;">${type}</span>
-        </div>
-      `;
-
-      html += `<h2 style="border-bottom: 2px solid #eee; padding-bottom: 10px; font-family: var(--font-display);">Groups</h2>
-               <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-xl);">
-                 ${groups.map(g => renderCard(g, 'group')).join('')}
-               </div>`;
-
-      html += `<h2 style="border-bottom: 2px solid #eee; padding-bottom: 10px; font-family: var(--font-display);">Idols</h2>
-               <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--spacing-md);">
-                 ${idols.map(i => renderCard(i, 'idol')).join('')}
-               </div>`;
-
-      html += `</div>`;
-      viewContainer.innerHTML = html;
-
-      // Event Listeners para ir a los perfiles
-      viewContainer.querySelectorAll('.artist-card').forEach(card => {
-        card.addEventListener('click', () => {
-          navigateTo('profile', { type: card.dataset.type, id: card.dataset.id });
-        });
-      });
-
-    } else if (view === 'admin') {
-      viewContainer.innerHTML = '';
-      viewContainer.appendChild(renderAdmin());
-      
-    } else if (view === 'records') {
-      viewContainer.innerHTML = '';
-      viewContainer.appendChild(await renderRecords());
-      
-    } else if (view === 'gala') {
-      viewContainer.innerHTML = '';
-      viewContainer.appendChild(await renderGala());
-      
-    } else if (view === 'profile') {
-      viewContainer.innerHTML = '';
-      viewContainer.appendChild(await renderProfile(params.type, params.id));
-    }
-  };
-
-  // 3. Listeners de los botones del Navbar
-  document.querySelector('#nav-home').addEventListener('click', () => navigateTo('home'));
-  document.querySelector('#nav-admin').addEventListener('click', () => navigateTo('admin'));
-  document.querySelector('#nav-records').addEventListener('click', () => navigateTo('records'));
-  document.querySelector('#nav-gala').addEventListener('click', () => navigateTo('gala'));
-
-  // 4. Inicializar base de datos y cargar la Home
+import "./css/variables.css";
+import "./css/global.css";
+import "./css/layout.css";
+import "./css/cards.css";
+import "./css/forms.css";
+import { db } from "./data/db.js";
+import { loadSnapshot } from "./services/entityService.js";
+import { renderHome } from "./views/home.js";
+import { renderDirectory } from "./views/directory.js";
+import { renderGala } from "./views/gala.js";
+import { renderProfile } from "./views/profile.js";
+import { renderRecords } from "./views/records.js";
+import { renderAdmin } from "./views/admin.js";
+import { page, heading, empty } from "./components/ui.js";
+const app = document.querySelector("#app");
+app.innerHTML =
+  '<a href="#view-container" class="skip-link">Skip to content</a><header class="site-header"><a class="brand" href="#home" aria-label="KPop Gala home"><span class="brand-mark">✦</span><span>KPOP GALA<small>HALL OF FAME</small></span></a><nav aria-label="Main navigation">' +
+  [
+    ["home", "Home"],
+    ["gala", "Gala"],
+    ["artists", "Artists"],
+    ["groups", "Groups"],
+    ["records", "Records"],
+    ["admin", "Admin"],
+  ]
+    .map(
+      ([route, label]) =>
+        '<a href="#' + route + '" data-route="' + route + '">' + label + "</a>",
+    )
+    .join("") +
+  '</nav><span class="header-edition">EST. 2024</span></header><main id="view-container" tabindex="-1"></main><footer class="site-footer"><a class="brand" href="#home">✦ KPOP GALA</a><span>A living archive of unforgettable music.</span><span>2024 — PRESENT</span></footer><div id="toasts" aria-live="polite"></div>';
+let request = 0;
+document.querySelector(".skip-link").addEventListener("click", (event) => {
+  event.preventDefault();
+  document.querySelector("main").focus();
+});
+async function navigate() {
+  const current = ++request,
+    container = document.querySelector("main");
+  container.setAttribute("aria-busy", "true");
   try {
-    await db.open();
-    navigateTo('home');
+    const [route = "home", part, id] = (location.hash.slice(1) || "home")
+      .split("/")
+      .map(decodeURIComponent);
+    const data = await loadSnapshot();
+    if (current !== request) return;
+    let view;
+    if (route === "home") view = renderHome(data);
+    else if (route === "artists" || route === "groups")
+      view = renderDirectory(route === "groups" ? "group" : "idol", data);
+    else if (route === "gala") view = renderGala(data, part);
+    else if (route === "profile") view = renderProfile(part, id, data);
+    else if (route === "records") view = renderRecords(data);
+    else if (route === "admin") view = renderAdmin(data);
+    else
+      view = page(
+        heading("ARCHIVE", "Page not found.") +
+          empty(
+            "This page is not in the archive.",
+            "Use the navigation to continue exploring.",
+          ),
+      );
+    container.replaceChildren(view);
+    document.querySelectorAll("[data-route]").forEach((link) => {
+      if (link.dataset.route === route)
+        link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
+    });
+    document.title =
+      (route === "home"
+        ? "Hall of Fame"
+        : route.charAt(0).toUpperCase() + route.slice(1)) + " · KPop Gala";
   } catch (error) {
-    console.error("Failed to open database:", error);
-    viewContainer.innerHTML = `<p style="color: red; padding: 20px; font-weight: bold;">Error crítico: No se pudo conectar a la base de datos histórica. (${error})</p>`;
+    container.replaceChildren(
+      page(heading("SOMETHING WENT WRONG", "The archive could not load.")),
+    );
+    const detail = document.createElement("p");
+    detail.className = "page";
+    detail.textContent = error.message;
+    container.append(detail);
+  } finally {
+    if (current === request) container.removeAttribute("aria-busy");
   }
 }
-
-initApp();
+window.addEventListener("hashchange", () => {
+  navigate();
+  window.scrollTo({ top: 0 });
+});
+window.addEventListener("catalog-changed", () => {
+  const view = document.querySelector("main > .page");
+  if (view?.refresh) view.refresh().catch(() => navigate());
+  else navigate();
+});
+document.addEventListener(
+  "error",
+  (event) => {
+    if (event.target instanceof HTMLImageElement) {
+      const parent = event.target.parentElement;
+      if (parent?.classList.contains("photo")) {
+        const fallback = document.createElement("span");
+        fallback.className = "monogram";
+        fallback.textContent = (event.target.alt || "KG")
+          .slice(0, 2)
+          .toUpperCase();
+        parent.replaceChildren(fallback);
+      } else event.target.hidden = true;
+    }
+  },
+  true,
+);
+db.on("versionchange", () => db.close());
+db.open()
+  .then(navigate)
+  .catch(() => navigate());

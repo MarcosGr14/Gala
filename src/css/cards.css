@@ -1,0 +1,323 @@
+.photo {
+  background: #e6ded5;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+.monogram {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-style: italic;
+  color: #716052;
+  letter-spacing: -0.08em;
+}
+.entity-card,
+.award-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  min-width: 0;
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s;
+}
+.entity-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px #24232512;
+}
+.entity-card:hover img {
+  transform: scale(1.035);
+}
+.entity-card > .photo {
+  aspect-ratio: 4/4.3;
+}
+.card-copy {
+  padding: 22px;
+}
+.card-copy h3 {
+  font-size: 1.18rem;
+  margin: 12px 0 8px;
+}
+.card-copy .eyebrow {
+  color: var(--text-secondary);
+  font-size: 0.6rem;
+  display: block;
+}
+.card-copy .text-link {
+  font-size: 0.72rem;
+}
+.card-copy p {
+  margin-bottom: 0;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+}
+.card-copy a:hover {
+  text-decoration: underline;
+}
+.award-images {
+  display: flex;
+  height: 205px;
+  overflow: hidden;
+}
+.award-images > a {
+  flex: 1;
+  min-width: 0;
+}
+.award-images .photo {
+  height: 100%;
+  width: 100%;
+}
+.award-card .badge {
+  color: var(--color-primary);
+  border: 0;
+  background: #f5e6eb;
+  font-size: 0.57rem;
+}
+.award-card.daesang {
+  background: var(--color-daesang-bg);
+  color: var(--color-daesang-text);
+  border-color: #625234;
+  box-shadow: 0 12px 35px #5c4b2115;
+}
+.daesang .award-images {
+  height: 280px;
+}
+.daesang .card-copy {
+  padding: 28px;
+}
+.daesang .card-copy h3 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--color-daesang-accent);
+}
+.daesang .badge {
+  background: none;
+  border: 1px solid #9b8052;
+  color: var(--color-daesang-accent);
+}
+.daesang .card-copy p,
+.daesang .small {
+  color: #d1c7b5;
+}
+.daesang .photo {
+  background: #3c3931;
+}
+.daesang .monogram {
+  color: #d2b57e;
+}
+.feature {
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+.feature:nth-child(2) {
+  background: #efe9f3;
+}
+.feature .photo {
+  width: 75px;
+  height: 85px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.feature .monogram {
+  font-size: 30px;
+}
+.feature h3 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+.feature .eyebrow {
+  font-size: 0.58rem;
+  margin-bottom: 7px;
+  color: var(--color-primary);
+}
+.feature div > span {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+.feature > span:last-child {
+  margin-left: auto;
+}
+.feature-star {
+  font-size: 48px;
+  color: var(--color-primary);
+}
+.leaderboard {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 22px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--color-surface);
+}
+.rank-row:last-child {
+  border: 0;
+}
+.rank-row:hover {
+  background: #f1ede6;
+}
+.rank-number {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  width: 42px;
+  color: #948b80;
+}
+.rank-row .photo {
+  width: 64px;
+  height: 70px;
+  border-radius: 7px;
+  flex-shrink: 0;
+}
+.rank-row .monogram {
+  font-size: 25px;
+}
+.rank-name {
+  flex: 1;
+  min-width: 0;
+}
+.rank-name h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.rank-name .eyebrow {
+  font-size: 0.55rem;
+  color: var(--text-secondary);
+}
+.rank-value {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+}
+.rank-value strong {
+  font-size: 1.9rem;
+  font-family: var(--font-display);
+}
+.rank-value span {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+}
+.rank-first {
+  background: #f0e8d8;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.rank-first .rank-number {
+  color: #856420;
+}
+.rank-first .photo {
+  width: 80px;
+  height: 90px;
+}
+.rank-arrow {
+  margin-left: 12px;
+}
+.presentation {
+  max-width: 1100px !important;
+  width: 95vw !important;
+  background: #24231f !important;
+  color: #fff5dc;
+}
+.presentation .icon-button {
+  color: inherit;
+}
+.presentation-slide {
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.presentation-slide > h1 {
+  max-width: 800px;
+}
+.presentation-slide .award-card {
+  width: min(600px, 100%);
+}
+.presentation-slide .award-images {
+  height: 35vh;
+}
+.presentation .actions {
+  justify-content: center;
+  margin-top: 24px;
+}
+.presentation .button.secondary {
+  color: inherit;
+}
+.presentation .small {
+  color: #ded5c5;
+}
+@media (max-width: 700px) {
+  .card-copy {
+    padding: 16px;
+  }
+  .card-copy h3 {
+    font-size: 1rem;
+  }
+  .card-copy .small {
+    font-size: 10px;
+  }
+  .award-images {
+    height: 170px;
+  }
+  .daesang .award-images {
+    height: 260px;
+  }
+  .daesang .card-copy {
+    padding: 23px;
+  }
+  .daesang .card-copy h3 {
+    font-size: 1.5rem;
+  }
+  .feature {
+    padding: 18px;
+  }
+  .rank-row {
+    padding: 18px 14px;
+    gap: 12px;
+  }
+  .rank-number {
+    font-size: 1.2rem;
+    width: 25px;
+  }
+  .rank-row .photo,
+  .rank-first .photo {
+    width: 46px;
+    height: 54px;
+  }
+  .rank-name h3 {
+    font-size: 0.92rem;
+  }
+  .rank-arrow {
+    display: none;
+  }
+  .rank-value span {
+    max-width: 76px;
+    font-size: 10px;
+  }
+  .rank-value strong {
+    font-size: 1.6rem;
+  }
+}

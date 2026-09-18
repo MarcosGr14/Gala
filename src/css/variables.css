@@ -1,52 +1,22 @@
 :root {
-  /* Paleta Base - Crema, Rosa, Violeta Oscuro */
-  --color-bg: #FCFAF8;
-  --color-surface: #FFFFFF;
-  --color-surface-glass: rgba(255, 255, 255, 0.7);
-  
-  --color-primary: #D14D72; 
-  --color-primary-hover: #B53F5E;
-  --color-secondary: #4A3B52; 
-  
-  /* Daesang Premium Palette */
-  --color-daesang-bg: #1A1A1A;
-  --color-daesang-text: #F8E7C5; 
-  --color-daesang-accent: #D4AF37; 
-  --gradient-daesang: linear-gradient(135deg, #2c2c2c 0%, #111111 100%);
-  
-  /* Texto */
-  --text-primary: #2D2D2D;
-  --text-secondary: #6B6B6B;
-  --text-inverse: #FFFFFF;
-
-  /* Tipografía */
-  --font-body: 'DM Sans', sans-serif;
-  --font-display: 'Playfair Display', serif; 
-  
-  /* Estructura y Espaciado */
-  --radius-sm: 4px;
-  --radius-md: 12px;
-  --radius-lg: 24px;
-  --radius-card: 16px;
-  
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 48px;
-
-  /* Sombras y Glassmorphism */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.06);
-  --shadow-daesang: 0 12px 32px rgba(212, 175, 55, 0.15);
-  --backdrop-blur: blur(12px);
-}
-
-body {
-  font-family: var(--font-body);
-  background-color: var(--color-bg);
-  color: var(--text-primary);
-  margin: 0;
-  padding: 0;
-  -webkit-font-smoothing: antialiased;
+  --color-bg: #f8f6f1;
+  --color-surface: #fffefa;
+  --text-primary: #242325;
+  --text-secondary: #68635f;
+  --color-primary: #a62f55;
+  --color-primary-hover: #872443;
+  --color-secondary: #56446a;
+  --pink: #efbbcf;
+  --cyan: #c4e7e4;
+  --violet: #dcd3eb;
+  --yellow: #f1e1a1;
+  --color-daesang-bg: #24231f;
+  --color-daesang-text: #fff5dc;
+  --color-daesang-accent: #dbbd7b;
+  --border: #e1dcd4;
+  --font-body: "DM Sans", Arial, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+  --radius-card: 14px;
+  --shadow-card: 0 10px 30px #24232508;
+  --nav-height: 90px;
 }

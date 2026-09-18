@@ -1,69 +1,34 @@
-import { db } from '../data/db.js';
-import { generateId } from '../utils/helpers.js';
-
-export async function addIdol(stageName, realName, photoUrl, debutDate) {
-  const newIdol = {
-    id: generateId('idol'),
+import { db } from "../data/db.js";
+import { saveRecord } from "./catalogService.js";
+export const addIdol = (stageName, realName, photo, debutDate) =>
+  saveRecord("idol", {
     stageName,
-    realName: realName || null,
-    photo: photoUrl || '/assets/placeholder-idol.jpg',
-    debutDate: debutDate || null,
-    status: 'active'
-  };
-  await db.idols.add(newIdol);
-  return newIdol;
-}
-
-export async function addGroup(name, type, photoUrl, debutDate) {
-  const newGroup = {
-    id: generateId('group'),
-    name,
-    type, 
-    photo: photoUrl || '/assets/placeholder-group.jpg',
-    debutDate: debutDate || null,
-    status: 'active'
-  };
-  await db.groups.add(newGroup);
-  return newGroup;
-}
-
-// --- NUEVAS FUNCIONES ---
-
-export async function getAllIdols() {
-  return await db.idols.toArray();
-}
-
-export async function getAllGroups() {
-  return await db.groups.toArray();
-}
-
-export async function addMembership(idolId, groupId, role) {
-  const newMembership = {
-    id: generateId('mem'),
+    realName,
+    photo,
+    debutDate,
+    status: "active",
+  });
+export const addGroup = (name, type, photo, debutDate) =>
+  saveRecord("group", { name, type, photo, debutDate, status: "active" });
+export const addMembership = (idolId, groupId, role = "Member") =>
+  saveRecord("membership", {
     idolId,
     groupId,
-    role: role || 'Member',
-    status: 'currentMember', // Puede ser 'formerMember' en el futuro
+    role,
+    status: "current",
     startDate: null,
-    endDate: null
-  };
-  await db.memberships.add(newMembership);
-  return newMembership;
-}
-
-// ... (código existente) ...
-
-export async function getIdolById(id) {
-  return await db.idols.get(id);
-}
-
-export async function getGroupById(id) {
-  return await db.groups.get(id);
-}
-
+    endDate: null,
+  });
+export const getAllIdols = () => db.idols.toArray();
+export const getAllGroups = () => db.groups.toArray();
+export const getIdolById = (id) => db.idols.get(id);
+export const getGroupById = (id) => db.groups.get(id);
 export async function getGroupMembers(groupId) {
-  const memberships = await db.memberships.where({ groupId }).toArray();
-  const idolIds = memberships.map(m => m.idolId);
-  // Buscar a todos los idols que coincidan con esos IDs
-  return await db.idols.where('id').anyOf(idolIds).toArray();
+  const memberships = await db.memberships
+    .where("groupId")
+    .equals(groupId)
+    .toArray();
+  return (
+    await db.idols.bulkGet([...new Set(memberships.map((m) => m.idolId))])
+  ).filter(Boolean);
 }

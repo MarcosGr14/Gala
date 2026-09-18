@@ -1,69 +1,70 @@
-import { getLeaderboardsData } from '../services/statsService.js';
-
-export async function renderRecords() {
-  const container = document.createElement('div');
-  container.style.padding = 'var(--spacing-xl)';
-  container.style.maxWidth = '1200px';
-  container.style.margin = '0 auto';
-
-  const { idolStats, groupStats, daesangStats } = await getLeaderboardsData();
-
-  // Función interna para dibujar un Leaderboard (Lista visual)
-  const renderList = (title, data, label, isDaesang = false) => {
-    const bgClass = isDaesang ? 'background: var(--color-daesang-bg); color: var(--color-daesang-text);' : 'background: var(--color-surface); color: var(--text-primary);';
-    const accentClass = isDaesang ? 'color: var(--color-daesang-accent);' : 'color: var(--color-primary);';
-    
-    let html = `
-      <div style="${bgClass} padding: var(--spacing-lg); border-radius: var(--radius-card); box-shadow: var(--shadow-card);">
-        <h2 style="font-family: var(--font-display); ${accentClass} margin-top: 0; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 10px;">${title}</h2>
-        <div style="display: flex; flex-direction: column; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
-    `;
-
-    if (data.length === 0) {
-      html += `<p style="opacity: 0.6; font-style: italic;">No records found yet.</p>`;
-    }
-
-    data.forEach((item, index) => {
-      const position = index + 1;
-      const size = position === 1 ? '60px' : '45px'; // El Top 1 tiene foto más grande
-      const name = item.entityType === 'idol' ? item.stageName : item.name;
-      
-      html += `
-        <div style="display: flex; align-items: center; gap: var(--spacing-md); padding: 10px 0; border-bottom: 1px solid rgba(128,128,128,0.1);">
-          <div style="font-family: var(--font-display); font-size: ${position === 1 ? '2em' : '1.5em'}; font-weight: bold; width: 30px; text-align: center; opacity: ${position === 1 ? '1' : '0.5'};">
-            #${position}
-          </div>
-          <div style="width: ${size}; height: ${size}; border-radius: 50%; background-image: url('${item.photo}'); background-size: cover; background-position: center; flex-shrink: 0;"></div>
-          <div style="flex-grow: 1;">
-            <h3 style="margin: 0; font-size: ${position === 1 ? '1.2em' : '1em'};">${name}</h3>
-            <span style="font-size: 0.8em; opacity: 0.7; text-transform: uppercase;">${item.entityType}</span>
-          </div>
-          <div style="text-align: right;">
-            <h2 style="margin: 0; font-size: 1.8em; ${accentClass}">${item.count}</h2>
-            <span style="font-size: 0.7em; font-weight: bold; letter-spacing: 1px; opacity: 0.7;">${label}</span>
-          </div>
-        </div>
-      `;
-    });
-
-    html += `</div></div>`;
-    return html;
+import { page, heading, photo, entityHref, empty } from "../components/ui.js";
+import { buildStats } from "../services/statsService.js";
+import { rankEntities } from "../services/statistics.js";
+import { escapeHtml as e } from "../utils/helpers.js";
+const metrics = {
+  directWins: "Direct wins",
+  directDaesangs: "Direct Daesangs",
+  totalLegacyAwards: "Legacy awards",
+  associatedMemberWins: "Associated member wins",
+  associatedDaesangs: "Associated Daesangs",
+  legacyDaesangs: "Legacy Daesangs",
+  nominations: "Nominations",
+  bestSeasonWins: "Best season",
+  categoriesWon: "Categories won",
+};
+export function renderRecords(data) {
+  const stats = buildStats(data);
+  const root = page(
+    heading(
+      "THE ALL-TIME HONOR ROLL",
+      "Records that endure.",
+      "Explore direct wins, the legacy of a group, and the highest honors.",
+    ) +
+      `<div class="toolbar"><label>Record<select data-metric>${Object.entries(
+        metrics,
+      )
+        .map(
+          ([key, label]) =>
+            '<option value="' + key + '">' + label + "</option>",
+        )
+        .join(
+          "",
+        )}</select></label><label>Artists<select data-type><option value="">All artists</option><option value="idol">Idols</option><option value="group">Groups</option></select></label></div><p class="small" data-explainer></p><div class="leaderboard" data-rankings></div>`,
+  );
+  const render = () => {
+    const metric = root.querySelector("[data-metric]").value,
+      type = root.querySelector("[data-type]").value;
+    const groupOnly = [
+      "totalLegacyAwards",
+      "associatedMemberWins",
+      "associatedDaesangs",
+      "legacyDaesangs",
+    ].includes(metric);
+    const rows = rankEntities(
+      stats.filter(
+        (r) =>
+          (!type || r.entityType === type) &&
+          (!groupOnly || r.entityType === "group"),
+      ),
+      metric,
+    );
+    root.querySelector("[data-explainer]").textContent = groupOnly
+      ? "Group records include eligible historical member results, counted once per award."
+      : "Direct records count results awarded to the named artist. Shared results count once for each winning artist. Ties share a rank.";
+    root.querySelector("[data-rankings]").innerHTML = rows.length
+      ? rows
+          .map(
+            (row) =>
+              `<a href="${entityHref(row)}" class="rank-row ${row.rank === 1 ? "rank-first" : ""}"><span class="rank-number">${String(row.rank).padStart(2, "0")}</span>${photo(row)}<div class="rank-name"><span class="eyebrow">${e(row.entityType)}</span><h3>${e(row.name)}</h3></div><div class="rank-value"><strong>${row.count}</strong><span>${metric === "bestSeasonWins" ? e(row.bestSeason) : e(metrics[metric])}</span></div><span class="rank-arrow">↗</span></a>`,
+          )
+          .join("")
+      : empty(
+          "No records in this collection.",
+          "Records appear as results and nominations are added.",
+        );
   };
-
-  container.innerHTML = `
-    <h1 style="font-family: var(--font-display); color: var(--color-primary); text-align: center; font-size: 3em; margin-bottom: var(--spacing-xl);">All-Time Records</h1>
-    
-    <!-- DAESANGS ocupa todo el ancho superior -->
-    <div style="margin-bottom: var(--spacing-lg);">
-      ${renderList('🏆 MOST DAESANGS', daesangStats, 'DAESANGS', true)}
-    </div>
-
-    <!-- Idols y Groups se dividen en 2 columnas -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--spacing-lg);">
-      ${renderList('MOST LEGACY AWARDS (GROUPS)', groupStats, 'AWARDS')}
-      ${renderList('MOST DIRECT WINS (IDOLS)', idolStats, 'AWARDS')}
-    </div>
-  `;
-
-  return container;
+  root.querySelectorAll("select").forEach((el) => (el.onchange = render));
+  render();
+  return root;
 }
