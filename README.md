@@ -1,4 +1,4 @@
-# KPop Gala — Hall of Fame
+Gala — Hall of Fame
 
 A local-first music awards archive built with Vanilla JavaScript, Vite, Dexie / IndexedDB and Vitest.
 
