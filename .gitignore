@@ -6,3 +6,17 @@ coverage/
 !.env.example
 tmp/
 *.log
+
+# Local exports and working copies of the archive. The compact seed below is
+# intentionally tracked because GitHub Pages uses it to initialize new visits.
+kpop-gala-*.json
+*backup*.json
+notion-*.json
+notion-*-notes.md
+*-import-notes.md
+!public/archive-backup.json
+
+# Local editor and operating-system files
+.DS_Store
+*.swp
+*.swo
