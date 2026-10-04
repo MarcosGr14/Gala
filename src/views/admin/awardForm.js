@@ -11,7 +11,7 @@ import { autocomplete } from "../../components/autocomplete.js";
 import { modal, toast, awardCard } from "../../components/ui.js";
 import { pickerItems, openEntityForm } from "./entityForm.js";
 import { escapeHtml as e } from "../../utils/helpers.js";
-export async function openAwardForm(existing = null, onSaved = () => {}) {
+export async function openAwardForm(existing = null, onSaved = () => {}, options = {}) {
   let data = await loadSnapshot(),
     category = null,
     winners = null;
@@ -34,6 +34,7 @@ export async function openAwardForm(existing = null, onSaved = () => {}) {
       .join("") +
     '</select></label><div data-category></div><div data-dynamic></div><div data-preview aria-live="polite"></div><p class="form-error" role="alert"></p><button class="button" type="submit">Save historical result</button>';
   if (existing) form.elements.seasonId.value = existing.seasonId;
+  else if (options.seasonId) form.elements.seasonId.value = options.seasonId;
   const categoryPicker = autocomplete({
     label: "Category",
     items: pickerItems(["category"], data),
@@ -104,6 +105,7 @@ export async function openAwardForm(existing = null, onSaved = () => {}) {
         "</select>";
       dynamic.append(label);
       if (existing?.slot) label.querySelector("select").value = existing.slot;
+      else if (options.slot) label.querySelector("select").value = options.slot;
       label.querySelector("select").onchange = renderPreview;
     }
     const hint = document.createElement("p");
@@ -120,7 +122,7 @@ export async function openAwardForm(existing = null, onSaved = () => {}) {
     winners = autocomplete({
       label: "Winners",
       items: pickerItems(types, data),
-      multiple: ["pair", "multiple"].includes(structure),
+      multiple: true,
       onChange: renderPreview,
     });
     dynamic.append(winners.element);
@@ -156,11 +158,12 @@ export async function openAwardForm(existing = null, onSaved = () => {}) {
       );
     renderPreview();
   }
-  if (existing) {
+  if (existing || options.categoryId) {
+    const categoryId = existing?.categoryId || options.categoryId;
     category =
       pickerItems(["category"], data).find(
-        (c) => c.id === existing.categoryId,
-      ) || data.categories.find((c) => c.id === existing.categoryId);
+        (c) => c.id === categoryId,
+      ) || data.categories.find((c) => c.id === categoryId);
     categoryPicker.setValue(
       category ? [{ ...category, name: category.displayName }] : [],
     );

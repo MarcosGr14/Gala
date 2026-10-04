@@ -371,6 +371,19 @@ th {
   .manage-row > div:first-child {
     max-width: 65%;
   }
+  .incomplete-heading {
+    align-items: flex-start;
+    padding: 18px;
+  }
+  .incomplete-total {
+    white-space: normal;
+  }
+  .incomplete-artist {
+    flex-wrap: wrap;
+  }
+  .incomplete-artist > .button {
+    margin-left: auto;
+  }
   .modal-top h2 {
     font-size: 1.4rem;
   }
@@ -379,6 +392,82 @@ th {
 /* Artist management: the same compact layout works for idols and groups. */
 .artist-shortcuts {
   margin: 0 0 20px;
+}
+.incomplete-profiles {
+  display: grid;
+  gap: 18px;
+}
+.incomplete-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+.incomplete-heading h2 {
+  margin-bottom: 8px;
+  font-size: 1.5rem;
+}
+.incomplete-heading p:last-child {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: .86rem;
+}
+.incomplete-total {
+  display: grid;
+  justify-items: end;
+  text-align: right;
+  white-space: nowrap;
+}
+.incomplete-total strong {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+}
+.incomplete-total span,
+.incomplete-count {
+  color: var(--text-secondary);
+  font-size: .78rem;
+}
+.incomplete-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.incomplete-filter {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--text-primary);
+  font-size: .78rem;
+}
+.incomplete-filter.selected {
+  border-color: var(--color-daesang-bg);
+  background: var(--color-daesang-bg);
+  color: var(--color-daesang-text);
+}
+.incomplete-count {
+  margin: -6px 0 0;
+}
+.missing-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.missing-tag {
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #f5e6eb;
+  color: #713e51;
+  font-size: .65rem;
+}
+.incomplete-artist > .button {
+  flex-shrink: 0;
 }
 .archive-toggle {
   flex-direction: row;
@@ -489,3 +578,24 @@ th {
     grid-template-columns: 1fr;
   }
 }
+
+.award-coverage { margin: 24px 0 34px; padding: 22px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, #fff); }
+.coverage-header, .coverage-title, .coverage-summary { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.coverage-header h2 { margin: 0 0 5px; font-family: var(--font-display); font-weight: 500; }
+.coverage-header .small { margin: 0; }
+.coverage-header label, .award-coverage > label { display: grid; gap: 6px; }
+.coverage-summary { justify-content: flex-start; flex-wrap: wrap; padding: 16px 0; margin: 14px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.coverage-summary span { padding: 7px 12px; border-radius: 20px; background: var(--color-bg); font-size: .8rem; }
+.coverage-summary b { margin-right: 4px; }
+.coverage-list { margin-top: 10px; }
+.coverage-card { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+.coverage-main { min-width: 0; }
+.coverage-title { justify-content: flex-start; flex-wrap: wrap; }
+.coverage-title strong { font-weight: 550; }
+.coverage-badge { padding: 3px 9px; border-radius: 20px; font-size: .68rem; background: #eee; }
+.coverage-badge.complete { background: #e1efe5; color: #27643c; }
+.coverage-badge.partial { background: #f8eed4; color: #805c0d; }
+.coverage-badge.missing { background: #f3e1df; color: #8b3930; }
+.coverage-winners { margin: 5px 0 0; color: var(--text-secondary); font-size: .78rem; overflow-wrap: anywhere; }
+.coverage-card > .actions { flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 700px) { .coverage-header, .coverage-card { align-items: stretch; flex-direction: column; } .coverage-card > .actions { justify-content: flex-start; } .award-coverage { padding: 16px; } }

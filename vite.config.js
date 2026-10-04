@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  base: process.env.GITHUB_ACTIONS === "true" ? "/Gala/" : "/",
   server: {
     port: 5173, // El puerto por defecto
   },

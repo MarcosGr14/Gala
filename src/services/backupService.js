@@ -5,9 +5,11 @@ import { loadSnapshot, createIndex, winnerRefs } from "./entityService.js";
 import { validateRecord, auditEntry } from "./catalogService.js";
 import { validateAward } from "./awardValidation.js";
 import { generateId } from "../utils/helpers.js";
+// Backup format versions describe the JSON contract, independent of IndexedDB migrations.
+const BACKUP_SCHEMA_VERSION = 2;
 export async function createBackup(database = db) {
   return {
-    schemaVersion: database.verno,
+    schemaVersion: BACKUP_SCHEMA_VERSION,
     appVersion: "2.0.0",
     createdAt: new Date().toISOString(),
     ...(await loadSnapshot(database)),
@@ -61,7 +63,16 @@ export function prepareBackup(input, current = {}) {
       throw new Error("Duplicate IDs in " + table);
     data[table] = structuredClone(rows);
   }
-  data.categories = data.categories.map(categoryDefaults);
+  data.categories = data.categories.map((row) => {
+    const category = categoryDefaults(row);
+    if (category.id === "cat_best_fanservice" || category.name === "Best Fanservice")
+      category.winnerType = "group";
+    if (category.id === "cat_best_look_change" || category.name === "Best Look Change")
+      category.winnerType = "idol";
+    if (category.id === "cat_best_comeback_look" || category.name === "Best Comeback Look")
+      category.winnerType = "idol";
+    return category;
+  });
   data.memberships = data.memberships.map((m) => ({
     ...m,
     status:

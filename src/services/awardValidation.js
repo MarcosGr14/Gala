@@ -22,11 +22,6 @@ export function validateAward(award, category, index) {
   if (category.winnerStructure === "pair" && refs.length !== 2)
     throw new Error("Choose exactly two different winners.");
   if (
-    !["pair", "multiple"].includes(category.winnerStructure) &&
-    refs.length !== 1
-  )
-    throw new Error("This result requires one winner.");
-  if (
     category.winnerStructure === "maleFemale" &&
     !["male", "female"].includes(award.slot)
   )

@@ -22,9 +22,22 @@ const unique = (rows) => [
 ];
 export function entityStatistics(type, id, data, index) {
   const awards = unique(data.awardResults);
-  const direct = awards.filter((a) =>
+  const directEntity = awards.filter((a) =>
     winnerRefs(a).some((r) => r.id === id && r.type === type),
   );
+  const mediaAwards = ["idol", "group"].includes(type)
+    ? awards.filter((award) =>
+        winnerRefs(award).some((ref) => {
+          if (!["song", "album"].includes(ref.type)) return false;
+          const media = index[ref.type === "song" ? "songs" : "albums"]?.get(ref.id);
+          return (
+            media &&
+            [...(media.artistIds || []), ...(media.groupIds || [])].includes(id)
+          );
+        }),
+      )
+    : [];
+  const direct = unique([...directEntity, ...mediaAwards]);
   const directIds = new Set(direct.map((a) => a.id));
   const memberships =
     type === "group" ? data.memberships.filter((m) => m.groupId === id) : [];
@@ -50,30 +63,27 @@ export function entityStatistics(type, id, data, index) {
       (index.seasons.get(b[0])?.year || 0) -
         (index.seasons.get(a[0])?.year || 0),
   )[0];
-  const nominations = data.nominations.filter(
-    (n) => n.entityId === id && (!n.entityType || n.entityType === type),
-  );
-  const nominationKeys = new Set(
-    nominations.map((n) => `${n.seasonId}|${n.categoryId}|${n.slot || ""}`),
-  );
-  const nominatedWins = new Set(
-    direct
-      .map((a) => `${a.seasonId}|${a.categoryId}|${a.slot || ""}`)
-      .filter((key) => nominationKeys.has(key)),
-  );
+  const bestSeasonRows = best
+    ? legacy.filter((a) => a.seasonId === best[0])
+    : [];
+  const categoriesAvailable = data.categories.length;
   return {
     direct,
     associated,
     legacy,
     directWins: direct.length,
+    directEntityWins: directEntity.length,
     associatedMemberWins: associated.length,
     totalLegacyAwards: legacy.length,
     directDaesangs: daesangs(direct),
     associatedDaesangs: daesangs(associated),
     legacyDaesangs: daesangs(legacy),
-    nominations: nominationKeys.size,
-    winRate: nominationKeys.size
-      ? Math.round((nominatedWins.size / nominationKeys.size) * 100)
+    winRate: categoriesAvailable && best
+      ? Math.round(
+          (new Set(bestSeasonRows.map((a) => a.categoryId)).size /
+            categoriesAvailable) *
+            100,
+        )
       : null,
     seasonsWon: counts.size,
     bestSeason: best ? index.seasons.get(best[0])?.year : null,

@@ -76,8 +76,25 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
     input.id = id;
     input.name = field.key;
     input.required = !!field.required;
-    if (field.options)
-      input.innerHTML = field.options
+    if (field.type === "range") {
+      input.min = 0;
+      input.max = 100;
+      input.step = 1;
+      input.value = record?.[field.key] ?? 50;
+      label.dataset.range = field.key;
+      label.append(document.createElement("output"));
+      label.querySelector("output").textContent = input.value + "%";
+      input.oninput = () => {
+        label.querySelector("output").textContent = input.value + "%";
+        updatePhotoPreview();
+      };
+    }
+    if (field.options) {
+      const options =
+        field.key === "photoFit" && type === "group"
+          ? [...field.options].reverse()
+          : field.options;
+      input.innerHTML = options
         .map(
           (option) =>
             '<option value="' +
@@ -87,7 +104,7 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
             "</option>",
         )
         .join("");
-    else if (input.tagName === "INPUT") input.type = field.type || "text";
+    } else if (input.tagName === "INPUT") input.type = field.type || "text";
     let value = record?.[field.key];
     if (field.key === "userSlots")
       value = Array.isArray(value) ? value.join(", ") : "user1, user2";
@@ -103,6 +120,31 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
     if (field.key === "sortOrder" && !record) input.value = 0;
     label.append(input);
     form.append(label);
+  }
+  function updatePhotoPreview() {
+    const preview = form.querySelector("[data-photo-preview]");
+    if (!preview) return;
+    const image = preview.querySelector("img"),
+      src = form.elements.namedItem("photo")?.value.trim(),
+      x = form.elements.namedItem("photoPositionX")?.value ?? 50,
+      y = form.elements.namedItem("photoPositionY")?.value ?? 50,
+      fit =
+        form.elements.namedItem("photoFit")?.value ||
+        (type === "group" ? "contain" : "cover");
+    image.src = src || "";
+    image.hidden = !src;
+    preview.classList.toggle("fit-contain", fit === "contain");
+    image.style.objectPosition = `${x}% ${y}%`;
+  }
+  if (["idol", "group"].includes(type)) {
+    const preview = document.createElement("div");
+    preview.className = "photo-adjust-preview";
+    preview.dataset.photoPreview = "";
+    preview.innerHTML = '<div class="photo-preview-frame"><img alt="Photo framing preview" hidden></div><p>Adjust the framing below; choose <strong>Contain</strong> to show the full image.</p>';
+    form.append(preview);
+    form.elements.namedItem("photo")?.addEventListener("input", updatePhotoPreview);
+    form.elements.namedItem("photoFit")?.addEventListener("change", updatePhotoPreview);
+    updatePhotoPreview();
   }
   const membershipEditor =
     record && ["idol", "group"].includes(type)
@@ -136,7 +178,7 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
           input[field.key] =
             field.type === "checkbox"
               ? element.checked
-              : field.type === "number"
+              : ["number", "range"].includes(field.type)
                 ? Number(element.value)
                 : element.value.trim();
           if (field.key === "userSlots")

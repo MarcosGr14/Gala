@@ -25,9 +25,8 @@ export function startPresentation(awards) {
       '</div><div class="actions"><button class="button secondary" data-prev ' +
       (!position ? "disabled" : "") +
       '>← Previous</button><span class="small">' +
-      (Math.floor(position / 3) + 1) +
-      " / " +
-      awards.length +
+      "Award " + (Math.floor(position / 3) + 1) + " of " + awards.length +
+      " · Slide " + (step + 1) + " of 3" +
       '</span><button class="button" data-next>' +
       (position === awards.length * 3 - 1 ? "Finish" : "Next →") +
       "</button></div>";

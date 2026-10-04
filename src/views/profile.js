@@ -11,9 +11,12 @@ import {
   createIndex,
   resolveFromIndex,
   populateAward,
+  loadSnapshot,
 } from "../services/entityService.js";
 import { entityStatistics } from "../services/statistics.js";
 import { ENTITY_TABLES } from "../data/catalog.js";
+import { FORMS } from "../data/fields.js";
+import { openEntityForm } from "./admin/entityForm.js";
 import { escapeHtml as e, safeUrl } from "../utils/helpers.js";
 export function renderProfile(type, id, data) {
   const index = createIndex(data),
@@ -90,12 +93,21 @@ export function renderProfile(type, id, data) {
         .map((w) => [w.entityType + ":" + w.id, w]),
     ).values(),
   ];
-  return page(`<a class="text-link" href="#${type === "group" ? "groups" : "artists"}">← Back to the archive</a><header class="profile-header">${photo(entity)}<div><p class="eyebrow">${e(entity.subtitle)} · ${e(entity.status || "ARCHIVE")}</p><h1>${e(entity.name)}</h1><p class="lede">${e(entity.description || entity.roles || "")}</p><p class="small">${entity.debutDate ? "DEBUT · " + e(entity.debutDate) : entity.releaseDate ? "RELEASED · " + e(entity.releaseDate) : ""}</p>${safeUrl(entity.videoUrl) ? '<a class="text-link" target="_blank" rel="noopener noreferrer" href="' + e(safeUrl(entity.videoUrl)) + '">Watch video ↗</a>' : ""}</div></header>
- <div class="metrics">${metric(type === "group" ? stats.totalLegacyAwards : stats.directWins, type === "group" ? "Legacy awards" : "Total awards")}${metric(stats.directWins, "Direct wins")}${metric(stats.directDaesangs, "Direct Daesangs")}${type === "group" ? metric(stats.associatedMemberWins, "Associated wins") + metric(stats.associatedDaesangs, "Associated Daesangs") + metric(stats.legacyDaesangs, "Legacy Daesangs") : ""}${metric(stats.nominations, "Nominations")}${metric(stats.winRate === null ? "—" : stats.winRate + "%", "Win rate")}${metric(stats.seasonsWon, "Seasons won")}${metric(stats.bestSeason, "Best season")}</div>
- <p class="small">Win rate uses recorded nominations matched by season, category and slot. Best season uses ${type === "group" ? "Legacy" : "direct"} awards; tied seasons show the most recent year.</p>
+  const root = page(`<a class="text-link" href="#${type === "group" ? "groups" : "artists"}">← Back to the archive</a><header class="profile-header">${photo(entity)}<div><p class="eyebrow">${e(entity.subtitle)} · ${e(entity.status || "ARCHIVE")}</p><h1>${e(entity.name)}</h1><button class="button secondary compact" data-edit-profile>Edit ${e(FORMS[type]?.label || type)}</button><p class="lede">${e(entity.description || entity.roles || "")}</p><p class="small">${entity.debutDate ? "DEBUT · " + e(entity.debutDate) : entity.releaseDate ? "RELEASED · " + e(entity.releaseDate) : ""}</p>${safeUrl(entity.videoUrl) ? '<a class="text-link" target="_blank" rel="noopener noreferrer" href="' + e(safeUrl(entity.videoUrl)) + '">Watch video ↗</a>' : ""}</div></header>
+ <div class="metrics">${metric(type === "group" ? stats.totalLegacyAwards : stats.directWins, type === "group" ? "Legacy awards" : "Total awards")}${metric(stats.directEntityWins, "Direct wins")}${metric(stats.directDaesangs, "Daesangs incl. songs & albums")}${type === "group" ? metric(stats.associatedMemberWins, "Associated wins") + metric(stats.associatedDaesangs, "Associated Daesangs") + metric(stats.legacyDaesangs, "Legacy Daesangs") : ""}${metric(stats.winRate === null ? "—" : stats.winRate + "%", "Win rate")}${metric(stats.seasonsWon, "Seasons won")}${metric(stats.bestSeason, "Best season")}</div>
+ <p class="small">Win rate is categories won in the best season divided by categories in the catalog. Best season uses ${type === "group" ? "Legacy" : "direct"} awards; tied seasons show the most recent year.</p>
  <div class="section-heading"><h2>Award history.</h2></div>${history(stats.direct)}
  ${stats.directDaesangs ? '<div class="section-heading"><h2>Daesang history.</h2></div>' + history(stats.direct.filter((a) => index.categories.get(a.categoryId)?.tier === "daesang")) : ""}
  ${type === "group" ? '<div class="section-heading"><h2>Member awards.</h2></div>' + history(stats.associated) : ""}
  ${relatedArtists.length ? '<div class="section-heading"><h2>' + (type === "group" ? "Members." : "Groups.") + '</h2></div><div class="entity-grid">' + relatedArtists.map(entityCard).join("") + '</div><details class="panel"><summary>Membership timeline</summary>' + memberships.map((m) => "<p>" + e(resolveFromIndex(type === "group" ? "idol" : "group", type === "group" ? m.idolId : m.groupId, index).name) + " · " + e(m.startDate || "Start unknown") + " → " + e(m.endDate || (["former", "formerMember"].includes(m.status) ? "End unknown" : "Present")) + " · " + e(m.role || "Member") + "</p>").join("") + "</details>" : ""}
  ${sections}${collaborators.length ? '<div class="section-heading"><h2>Collaborations.</h2></div><div class="entity-grid">' + collaborators.map(entityCard).join("") + "</div>" : ""}`);
+  root.querySelector("[data-edit-profile]").onclick = async () => {
+    const record = data[ENTITY_TABLES[type]]?.find((row) => row.id === id);
+    if (record) await openEntityForm(type, record);
+  };
+  root.refresh = async () => {
+    const updated = await loadSnapshot();
+    root.replaceWith(renderProfile(type, id, updated));
+  };
+  return root;
 }

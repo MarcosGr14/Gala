@@ -11,7 +11,7 @@ import { escapeHtml as e } from "../../utils/helpers.js";
 export async function openBackupPanel() {
   const content = document.createElement("div");
   content.innerHTML =
-    '<p>Keep a copy of your complete archive: artists, media, results, nominations and audit history.</p><div class="actions"><button class="button" data-export>Export complete backup</button><label class="button secondary">Choose backup<input class="visually-hidden" type="file" accept=".json,application/json" data-import></label></div><div data-preview></div><h3>Recovery points</h3><p class="small">A recovery point is saved in this browser before each restore. Download one to recover an earlier archive.</p><div data-points></div>';
+    '<p>Keep a copy of your complete archive: artists, media, results and audit history.</p><div class="actions"><button class="button" data-export>Export complete backup</button><label class="button secondary">Choose backup<input class="visually-hidden" type="file" accept=".json,application/json" data-import></label></div><div data-preview></div><h3>Recovery points</h3><p class="small">A recovery point is saved in this browser before each restore. Download one to recover an earlier archive.</p><div data-points></div>';
   modal("Backup & restore", content);
   content.querySelector("[data-export]").onclick = async () => {
     try {

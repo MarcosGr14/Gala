@@ -38,12 +38,17 @@ export function validateRecord(type, record, index, strict = true) {
     if (
       !field.types &&
       field.key !== "userSlots" &&
-      !["number", "checkbox"].includes(field.type) &&
+      !["number", "range", "checkbox"].includes(field.type) &&
       typeof value !== "string"
     )
       throw new Error(field.label + " must be text.");
     if (field.type === "checkbox" && typeof value !== "boolean")
       throw new Error(field.label + " must be true or false.");
+    if (
+      field.type === "range" &&
+      (!Number.isFinite(value) || value < 0 || value > 100)
+    )
+      throw new Error(field.label + " must be between 0 and 100.");
     if (field.type === "url" && !safeUrl(value))
       throw new Error(field.label + " must be an http(s) URL or local path.");
     if (

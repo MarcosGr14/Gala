@@ -16,7 +16,13 @@ export function empty(
 }
 export function photo(entity, className = "") {
   const src = safeUrl(entity.image);
-  return `<div class="photo ${className}">${src ? '<img src="' + e(src) + '" alt="' + e(entity.name) + '" loading="lazy" decoding="async">' : '<span class="monogram" aria-hidden="true">' + e(entity.name?.slice(0, 2).toUpperCase() || "KG") + "</span>"}</div>`;
+  const fit = entity.photoFit || (entity.entityType === "group" ? "contain" : "cover");
+  const axis = (value) =>
+    value === "" || value === null || value === undefined || !Number.isFinite(Number(value))
+      ? 50
+      : Math.max(0, Math.min(100, Number(value)));
+  const position = `${axis(entity.photoPositionX)}% ${axis(entity.photoPositionY)}%`;
+  return `<div class="photo ${className}${fit === "contain" ? " fit-contain" : ""}">${src ? '<img src="' + e(src) + '" alt="' + e(entity.name) + '" loading="lazy" decoding="async" style="object-position:' + position + '">' : '<span class="monogram" aria-hidden="true">' + e(entity.name?.slice(0, 2).toUpperCase() || "KG") + "</span>"}</div>`;
 }
 export function entityHref(entity) {
   return (

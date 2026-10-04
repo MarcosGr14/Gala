@@ -12,6 +12,9 @@
   object-fit: cover;
   transition: transform 0.4s;
 }
+.photo.fit-contain img {
+  object-fit: contain;
+}
 .monogram {
   font-family: var(--font-display);
   font-size: clamp(2rem, 5vw, 4rem);
@@ -236,6 +239,8 @@
 .presentation {
   max-width: 1100px !important;
   width: 95vw !important;
+  max-height: 96dvh;
+  overflow: auto;
   background: #24231f !important;
   color: #fff5dc;
 }
@@ -243,7 +248,8 @@
   color: inherit;
 }
 .presentation-slide {
-  min-height: 55vh;
+  min-height: min(62dvh, 700px);
+  padding: clamp(20px, 4vh, 44px) 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -251,13 +257,25 @@
   text-align: center;
 }
 .presentation-slide > h1 {
-  max-width: 800px;
+  max-width: 18ch;
+  font-size: clamp(2.4rem, 6.4vw, 5.25rem);
+  line-height: 1.06;
+  overflow-wrap: anywhere;
+  color: #fff5dc;
 }
-.presentation-slide .award-card {
-  width: min(600px, 100%);
+.presentation-slide > .eyebrow {
+  color: #d8b66e;
+  font-size: clamp(.75rem, 1.2vw, .95rem);
+  letter-spacing: .2em;
+}
+.presentation-slide > .award-card {
+  text-align: left;
 }
 .presentation-slide .award-images {
-  height: 35vh;
+  height: clamp(220px, 38dvh, 440px);
+}
+.presentation-slide .award-card {
+  width: min(780px, 100%);
 }
 .presentation .actions {
   justify-content: center;
@@ -268,6 +286,55 @@
 }
 .presentation .small {
   color: #ded5c5;
+}
+.presentation .actions {
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0 4px 4px;
+}
+.presentation .actions .small {
+  text-align: center;
+  line-height: 1.5;
+}
+.photo-adjust-preview {
+  grid-column: 1 / -1;
+}
+.photo-preview-frame {
+  height: clamp(170px, 34vh, 340px);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+.photo-preview-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-adjust-preview.fit-contain .photo-preview-frame img {
+  object-fit: contain;
+}
+.photo-preview-frame img[hidden] {
+  display: none;
+}
+.photo-adjust-preview p {
+  margin: 10px 0 0;
+  color: var(--text-secondary);
+  font-size: .8rem;
+}
+.entity-form label:has(input[type="range"]) {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+.entity-form label input[type="range"] {
+  grid-column: 1 / -1;
+  width: 100%;
+  padding: 0;
+}
+.entity-form label output {
+  color: var(--text-secondary);
+  font-size: .8rem;
 }
 @media (max-width: 700px) {
   .card-copy {
@@ -290,6 +357,20 @@
   }
   .daesang .card-copy h3 {
     font-size: 1.5rem;
+  }
+  .presentation-slide {
+    min-height: 48dvh;
+    padding: 16px 0;
+  }
+  .presentation-slide > h1 {
+    font-size: clamp(2rem, 9vw, 3.6rem);
+  }
+  .presentation-slide .award-images {
+    height: clamp(190px, 34dvh, 300px);
+  }
+  .presentation .actions {
+    gap: 10px;
+    margin-top: 12px;
   }
   .feature {
     padding: 18px;

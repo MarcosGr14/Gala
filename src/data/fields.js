@@ -3,6 +3,7 @@ const text = (key, label, required = false) => ({ key, label, required });
 const select = (key, label, options) => ({ key, label, options });
 const date = (key, label) => ({ key, label, type: "date" });
 const url = (key, label) => ({ key, label, type: "url" });
+const range = (key, label) => ({ key, label, type: "range" });
 const ref = (key, label, types, multiple = false, required = false) => ({
   key,
   label,
@@ -23,6 +24,9 @@ export const FORMS = {
       date("birthDate", "Birth date"),
       select("gender", "Gender", ["", "female", "male", "other"]),
       url("photo", "Photo URL"),
+      range("photoPositionX", "Photo framing · horizontal"),
+      range("photoPositionY", "Photo framing · vertical"),
+      select("photoFit", "Photo display", ["cover", "contain"]),
       date("debutDate", "Debut"),
       select("status", "Status", ["active", "inactive", "retired"]),
       text("roles", "Roles"),
@@ -36,6 +40,9 @@ export const FORMS = {
       text("name", "Name", true),
       select("type", "Type", ["gg", "bg", "mixed", "band", "subunit"]),
       url("photo", "Photo URL"),
+      range("photoPositionX", "Photo framing · horizontal"),
+      range("photoPositionY", "Photo framing · vertical"),
+      select("photoFit", "Photo display", ["cover", "contain"]),
       date("debutDate", "Debut"),
       select("status", "Status", ["active", "hiatus", "disbanded"]),
       text("description", "Biography"),
@@ -157,31 +164,6 @@ export const FORMS = {
       text("title", "Title", true),
       text("description", "Description"),
       url("image", "Banner URL"),
-    ],
-  },
-  nomination: {
-    label: "Nomination",
-    table: "nominations",
-    fields: [
-      ref("seasonId", "Season", ["season"], false, true),
-      ref("categoryId", "Category", ["category"], false, true),
-      ref(
-        "entityId",
-        "Nominee",
-        [
-          "idol",
-          "group",
-          "song",
-          "album",
-          "musicVideo",
-          "performance",
-          "outfit",
-          "documentary",
-        ],
-        false,
-        true,
-      ),
-      text("slot", "Slot (if applicable)"),
     ],
   },
 };

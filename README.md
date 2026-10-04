@@ -14,6 +14,19 @@ npm run build
 npm run preview
 ```
 
+## Publish on GitHub Pages
+
+This repository is configured for `https://<owner>.github.io/Gala/`. Push to
+`main` (or run the **Deploy to GitHub Pages** workflow manually), then in
+**Settings → Pages** select **GitHub Actions** as the source. The workflow
+builds and publishes the site. A first visit on Pages loads the checked-in
+`public/archive-backup.json` into that browser's local archive; later backups
+remain local to each browser and should be exported before replacing them.
+
+When updating the published starting archive, replace both
+`public/archive-backup.json` and `kpop-gala-2026-10-04-merged.json` with the
+new merged export before publishing.
+
 Keep using the same browser and URL (including hostname and port) to access your existing archive. IndexedDB belongs to an origin. Export a backup before switching devices, browsers or URLs.
 
 ## Using the archive
@@ -64,4 +77,3 @@ No cloud service or account is needed. Photos and optional Google Fonts require 
 - `test`: pure logic and isolated IndexedDB integration tests
 
 Tests use fake-indexeddb with disposable database names. They never open the real browser archive.
-

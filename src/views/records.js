@@ -3,13 +3,12 @@ import { buildStats } from "../services/statsService.js";
 import { rankEntities } from "../services/statistics.js";
 import { escapeHtml as e } from "../utils/helpers.js";
 const metrics = {
-  directWins: "Direct wins",
-  directDaesangs: "Direct Daesangs",
+  directWins: "Wins incl. songs & albums",
+  directDaesangs: "Daesangs incl. songs & albums",
   totalLegacyAwards: "Legacy awards",
   associatedMemberWins: "Associated member wins",
   associatedDaesangs: "Associated Daesangs",
   legacyDaesangs: "Legacy Daesangs",
-  nominations: "Nominations",
   bestSeasonWins: "Best season",
   categoriesWon: "Categories won",
 };
@@ -51,7 +50,7 @@ export function renderRecords(data) {
     );
     root.querySelector("[data-explainer]").textContent = groupOnly
       ? "Group records include eligible historical member results, counted once per award."
-      : "Direct records count results awarded to the named artist. Shared results count once for each winning artist. Ties share a rank.";
+      : "Artist records include awards won directly and through their songs or albums. Shared results count once for each winning artist. Ties share a rank.";
     root.querySelector("[data-rankings]").innerHTML = rows.length
       ? rows
           .map(
@@ -61,7 +60,7 @@ export function renderRecords(data) {
           .join("")
       : empty(
           "No records in this collection.",
-          "Records appear as results and nominations are added.",
+          "Records appear as winners are added.",
         );
   };
   root.querySelectorAll("select").forEach((el) => (el.onchange = render));
