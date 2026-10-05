@@ -10,6 +10,7 @@ import { renderDirectory } from "./views/directory.js";
 import { renderGala } from "./views/gala.js";
 import { renderProfile } from "./views/profile.js";
 import { renderRecords } from "./views/records.js";
+import { renderCategories, renderCategoryProfile } from "./views/categories.js";
 import { renderAdmin } from "./views/admin.js";
 import { page, heading, empty } from "./components/ui.js";
 const app = document.querySelector("#app");
@@ -20,6 +21,7 @@ app.innerHTML =
     ["gala", "Gala"],
     ["artists", "Artists"],
     ["groups", "Groups"],
+    ["categories", "Categories"],
     ["records", "Records"],
     ["admin", "Admin"],
   ]
@@ -48,6 +50,8 @@ async function navigate() {
     if (route === "home") view = renderHome(data);
     else if (route === "artists" || route === "groups")
       view = renderDirectory(route === "groups" ? "group" : "idol", data);
+    else if (route === "categories") view = renderCategories(data);
+    else if (route === "category") view = renderCategoryProfile(part, data);
     else if (route === "gala") view = renderGala(data, part);
     else if (route === "profile") view = renderProfile(part, id, data);
     else if (route === "records") view = renderRecords(data);

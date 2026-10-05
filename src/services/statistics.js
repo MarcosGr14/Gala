@@ -66,7 +66,9 @@ export function entityStatistics(type, id, data, index) {
   const bestSeasonRows = best
     ? legacy.filter((a) => a.seasonId === best[0])
     : [];
-  const categoriesAvailable = data.categories.length;
+  const categoriesAvailable = data.categories.filter(
+    (category) => category.active !== false && !category.archivedAt,
+  ).length;
   return {
     direct,
     associated,

@@ -87,7 +87,7 @@ async function openRemoval(type, artist, onChanged) {
 export function renderArtistList(
   type,
   data,
-  { query = "", showArchived = false, onEdit, onChanged },
+  { query = "", sort = "name", showArchived = false, onEdit, onChanged },
 ) {
   const index = createIndex(data),
     root = document.createElement("div");
@@ -127,10 +127,20 @@ export function renderArtistList(
     .filter(
       ({ row, entity, subtitle }) =>
         (showArchived || !isArchived(row)) &&
-        (entity.name + " " + (row.realName || "") + " " + subtitle)
+        `${entity.name} ${row.realName || ""} ${row.nationality || ""} ${row.description || ""} ${row.birthDate || ""} ${row.debutDate || ""} ${row.gender || ""} ${row.type || ""} ${subtitle}`
           .toLowerCase()
           .includes(query.toLowerCase()),
-    );
+    ).sort((a, b) => {
+      if (sort === "gender") return String(a.row.gender || a.row.type || "").localeCompare(String(b.row.gender || b.row.type || "")) || a.entity.name.localeCompare(b.entity.name);
+      if (sort === "oldest" || sort === "newest") {
+        const field = type === "idol" ? "birthDate" : "debutDate";
+        const direction = sort === "oldest" ? 1 : -1;
+        const av = a.row[field], bv = b.row[field];
+        if (!av || !bv) return av ? -1 : bv ? 1 : a.entity.name.localeCompare(b.entity.name);
+        return direction * String(av).localeCompare(String(bv)) || a.entity.name.localeCompare(b.entity.name);
+      }
+      return a.entity.name.localeCompare(b.entity.name) * (sort === "name-desc" ? -1 : 1);
+    });
   root.innerHTML = rows.length
     ? rows
         .map(

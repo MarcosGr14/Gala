@@ -1,5 +1,5 @@
 import { renderArtistList } from "./admin/artistList.js";
-import { page, heading, empty, toast, modal } from "../components/ui.js";
+import { page, heading, empty, toast, modal, categoryHref } from "../components/ui.js";
 import { FORMS } from "../data/fields.js";
 import {
   createIndex,
@@ -52,7 +52,7 @@ export function renderAdmin(initialData) {
         )
         .join(
           "",
-        )}<option value="incompleteProfiles">Incomplete idol profiles</option></select></label><label class="search-label">Search<input type="search" data-search placeholder="Find an entry…"></label><label class="archive-toggle"><input type="checkbox" data-show-archived> Show archived</label></div><div class="actions artist-shortcuts"><button class="button secondary compact" data-artists="idol">Idols</button><button class="button secondary compact" data-artists="group">Groups</button><button class="button secondary compact" data-incomplete>Incomplete profiles</button></div><div data-award-coverage></div><div data-list></div>`,
+        )}<option value="incompleteProfiles">Incomplete idol profiles</option></select></label><label class="search-label">Search<input type="search" data-search placeholder="Find an entry…"></label><label>Order<select data-admin-sort><option value="name">Name A–Z</option><option value="name-desc">Name Z–A</option><option value="gender">Gender / type</option><option value="oldest">Oldest first</option><option value="newest">Newest first</option></select></label><label class="archive-toggle"><input type="checkbox" data-show-archived> Show archived</label></div><div class="actions artist-shortcuts"><button class="button secondary compact" data-artists="idol">Idols</button><button class="button secondary compact" data-artists="group">Groups</button><button class="button secondary compact" data-incomplete>Incomplete profiles</button></div><div data-award-coverage></div><div data-list></div>`,
   );
   const updateIncompleteCount = () => {
     const { profiles } = countIncompleteProfiles(data);
@@ -123,6 +123,7 @@ export function renderAdmin(initialData) {
         .replaceChildren(
           renderArtistList(active, data, {
             query,
+            sort: root.querySelector("[data-admin-sort]").value,
             showArchived: root.querySelector("[data-show-archived]").checked,
             onEdit: (row) => handle(() => openEntityForm(active, row, refresh)),
             onChanged: refresh,
@@ -132,7 +133,16 @@ export function renderAdmin(initialData) {
     }
     const rows = (
       active === "awards" ? data.awardResults.filter((row) => row.seasonId === awardSeasonId) : data[FORMS[active].table]
-    ).filter((row) => labelOf(row).toLowerCase().includes(query));
+    ).filter((row) => JSON.stringify(row).toLowerCase().includes(query) || labelOf(row).toLowerCase().includes(query));
+    const sort = root.querySelector("[data-admin-sort]").value;
+    rows.sort((a, b) => {
+      if (sort === "gender") return String(a.gender || a.type || "").localeCompare(String(b.gender || b.type || "")) || labelOf(a).localeCompare(labelOf(b));
+      if (sort === "oldest" || sort === "newest") {
+        const field = active === "seasons" ? "year" : active === "idol" ? "birthDate" : active === "group" ? "debutDate" : "date";
+        return (sort === "oldest" ? 1 : -1) * String(a[field] || "9999").localeCompare(String(b[field] || "9999")) || labelOf(a).localeCompare(labelOf(b));
+      }
+      return labelOf(a).localeCompare(labelOf(b)) * (sort === "name-desc" ? -1 : 1);
+    });
     const list = root.querySelector("[data-list]");
     list.innerHTML = rows.length
       ? rows
@@ -205,7 +215,7 @@ export function renderAdmin(initialData) {
       const filled = records.filter(Boolean).length, status = filled === slots.length ? "complete" : filled ? "partial" : "missing";
       const names = records.map((record, i) => record ? (slots[i] ? slots[i] + ": " : "") + populateAward(record, index).winners.map((w) => w.name).join(" & ") : (slots[i] ? slots[i] + ": " : "") + "missing").join(" · ");
       const buttons = records.map((record, i) => record ? '<button class="button secondary compact" data-coverage-edit="' + e(record.id) + '">Edit ' + e(slots[i] || "winner") + '</button>' : '<button class="button secondary compact" data-coverage-add="' + e(c.id) + '" data-slot="' + e(slots[i]) + '">Add ' + e(slots[i] || "winner") + '</button>').join("");
-      return '<article class="coverage-card ' + status + '"><div><div class="coverage-title"><strong>' + e(c.displayName) + '</strong><span class="coverage-badge ' + status + '">' + (status === "complete" ? "Complete" : status === "partial" ? "Partial · " + filled + "/" + slots.length : "Pending") + '</span></div><span class="small">' + e(c.family || "Category") + '</span><p class="coverage-winners">' + e(names) + '</p></div><div class="actions">' + buttons + '</div></article>';
+      return '<article class="coverage-card ' + status + '"><div><div class="coverage-title"><a class="coverage-link" href="' + categoryHref(c) + '"><strong>' + e(c.displayName) + '</strong></a><span class="coverage-badge ' + status + '">' + (status === "complete" ? "Complete" : status === "partial" ? "Partial · " + filled + "/" + slots.length : "Pending") + '</span></div><span class="small">' + e(c.family || "Category") + '</span><p class="coverage-winners">' + e(names) + '</p></div><div class="actions">' + buttons + '</div></article>';
     });
     const counts = {complete: 0, partial: 0, missing: 0};
     data.categories.forEach((c) => { const slots = slotsFor(c), n = slots.filter((slot) => results.some((r) => r.categoryId === c.id && (r.slot || "") === slot)).length; counts[n === slots.length ? "complete" : n ? "partial" : "missing"]++; });
@@ -246,6 +256,7 @@ export function renderAdmin(initialData) {
     renderList();
   };
   root.querySelector("[data-search]").oninput = renderList;
+  root.querySelector("[data-admin-sort]").onchange = renderList;
   root.querySelector("[data-show-archived]").onchange = renderList;
   root.querySelectorAll("[data-artists]").forEach(
     (button) =>

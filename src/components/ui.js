@@ -32,12 +32,15 @@ export function entityHref(entity) {
     encodeURIComponent(entity.id)
   );
 }
+export function categoryHref(category) {
+  return category?.id ? "#category/" + encodeURIComponent(category.id) : "#categories";
+}
 export function entityCard(entity) {
   return `<a class="entity-card" href="${entityHref(entity)}">${photo(entity)}<div class="card-copy"><span class="eyebrow">${e(entity.subtitle)}</span><h3>${e(entity.name)}</h3><span class="text-link">Explore archive ↗</span></div></a>`;
 }
 export function awardCard(award) {
   const isDaesang = award.tier === "daesang";
-  return `<article class="award-card ${isDaesang ? "daesang" : ""}"><div class="award-images">${award.winners.map((w) => '<a href="' + entityHref(w) + '">' + photo(w) + "</a>").join("")}</div><div class="card-copy"><div class="split"><span class="badge">${isDaesang ? "✦ DAESANG" : e(award.category.family)}</span><span class="small">${e(award.year)}</span></div><h3>${e(award.categoryName)}</h3><p>${award.winners.map((w) => '<a href="' + entityHref(w) + '">' + e(w.name) + "</a>").join(" & ")}</p>${award.slot ? '<span class="small">' + e(award.slot) + "</span>" : ""}</div></article>`;
+  return `<article class="award-card ${isDaesang ? "daesang" : ""}"><div class="award-images">${award.winners.map((w) => '<a href="' + entityHref(w) + '">' + photo(w) + "</a>").join("")}</div><div class="card-copy"><div class="split"><a class="badge category-award-link" href="${categoryHref(award.category)}">${isDaesang ? "✦ DAESANG" : e(award.category.family)}</a><span class="small">${e(award.year)}</span></div><h3><a class="category-award-title" href="${categoryHref(award.category)}">${e(award.categoryName)}</a></h3><p>${award.winners.map((w) => '<a href="' + entityHref(w) + '">' + e(w.name) + "</a>").join(" & ")}</p>${award.slot ? '<span class="small">' + e(award.slot) + "</span>" : ""}</div></article>`;
 }
 export function metric(value, label) {
   return `<div class="metric"><strong>${e(value ?? "—")}</strong><span>${e(label)}</span></div>`;

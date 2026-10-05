@@ -20,7 +20,7 @@ export function renderRecords(data) {
       "Records that endure.",
       "Explore direct wins, the legacy of a group, and the highest honors.",
     ) +
-      `<div class="toolbar"><label>Record<select data-metric>${Object.entries(
+      `<div class="toolbar"><label class="search-label">Search records<input type="search" data-search placeholder="Find an artist or group…"></label><label>Record<select data-metric>${Object.entries(
         metrics,
       )
         .map(
@@ -29,11 +29,13 @@ export function renderRecords(data) {
         )
         .join(
           "",
-        )}</select></label><label>Artists<select data-type><option value="">All artists</option><option value="idol">Idols</option><option value="group">Groups</option></select></label></div><p class="small" data-explainer></p><div class="leaderboard" data-rankings></div>`,
+        )}</select></label><label>Artists<select data-type><option value="">All artists</option><option value="idol">Idols</option><option value="group">Groups</option></select></label><label>Order<select data-order><option value="rank">Most wins</option><option value="name">Name A–Z</option><option value="gender">Gender</option></select></label></div><p class="small" data-explainer></p><div class="leaderboard" data-rankings></div>`,
   );
   const render = () => {
     const metric = root.querySelector("[data-metric]").value,
-      type = root.querySelector("[data-type]").value;
+      type = root.querySelector("[data-type]").value,
+      query = root.querySelector("[data-search]").value.trim().toLocaleLowerCase(),
+      order = root.querySelector("[data-order]").value;
     const groupOnly = [
       "totalLegacyAwards",
       "associatedMemberWins",
@@ -44,10 +46,13 @@ export function renderRecords(data) {
       stats.filter(
         (r) =>
           (!type || r.entityType === type) &&
-          (!groupOnly || r.entityType === "group"),
+          (!groupOnly || r.entityType === "group") &&
+          `${r.name} ${r.subtitle} ${r.gender || ""} ${r.type || ""}`.toLocaleLowerCase().includes(query),
       ),
       metric,
     );
+    if (order === "name") rows.sort((a, b) => a.name.localeCompare(b.name));
+    if (order === "gender") rows.sort((a, b) => String(a.gender || a.type || "other").localeCompare(String(b.gender || b.type || "other")) || a.name.localeCompare(b.name));
     root.querySelector("[data-explainer]").textContent = groupOnly
       ? "Group records include eligible historical member results, counted once per award."
       : "Artist records include awards won directly and through their songs or albums. Shared results count once for each winning artist. Ties share a rank.";
@@ -64,6 +69,7 @@ export function renderRecords(data) {
         );
   };
   root.querySelectorAll("select").forEach((el) => (el.onchange = render));
+  root.querySelector("[data-search]").oninput = render;
   render();
   return root;
 }
