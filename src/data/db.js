@@ -133,11 +133,18 @@ export function createDatabase(name = "KPopGalaDatabase") {
     });
 
   database.on("populate", () => seedDatabase(database));
-  database.on("ready", () =>
-    mergePublishedCatalogAdditions(database).catch((error) => {
-      console.warn("Could not merge published catalog additions.", error);
-    }),
-  );
+  // Never make database startup wait on a network request. GitHub Pages may
+  // take time to serve the additions file; the app must render with its local
+  // archive while that optional merge happens in the background.
+  database.on("ready", () => {
+    setTimeout(() => {
+      mergePublishedCatalogAdditions(database)
+        .then(() => globalThis.window?.dispatchEvent(new Event("catalog-changed")))
+        .catch((error) => {
+          console.warn("Could not merge published catalog additions.", error);
+        });
+    }, 0);
+  });
 
   return database;
 }
