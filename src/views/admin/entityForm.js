@@ -105,7 +105,7 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
         )
         .join("");
     } else if (input.tagName === "INPUT") input.type = field.type || "text";
-    let value = record?.[field.key];
+    let value = field.key === "photoFit" ? "cover" : record?.[field.key];
     if (field.key === "userSlots")
       value = Array.isArray(value) ? value.join(", ") : "user1, user2";
     if (value !== undefined && value !== null) {
@@ -128,9 +128,7 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
       src = form.elements.namedItem("photo")?.value.trim(),
       x = form.elements.namedItem("photoPositionX")?.value ?? 50,
       y = form.elements.namedItem("photoPositionY")?.value ?? 50,
-      fit =
-        form.elements.namedItem("photoFit")?.value ||
-        (type === "group" ? "contain" : "cover");
+      fit = "cover";
     image.src = src || "";
     image.hidden = !src;
     preview.classList.toggle("fit-contain", fit === "contain");
@@ -140,7 +138,7 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
     const preview = document.createElement("div");
     preview.className = "photo-adjust-preview";
     preview.dataset.photoPreview = "";
-    preview.innerHTML = '<div class="photo-preview-frame"><img alt="Photo framing preview" hidden></div><p>Adjust the framing below; choose <strong>Contain</strong> to show the full image.</p>';
+    preview.innerHTML = '<div class="photo-preview-frame"><img alt="Photo framing preview" hidden></div><p>Adjust the image position; the photo fills the frame.</p>';
     form.append(preview);
     form.elements.namedItem("photo")?.addEventListener("input", updatePhotoPreview);
     form.elements.namedItem("photoFit")?.addEventListener("change", updatePhotoPreview);

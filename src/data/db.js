@@ -1,6 +1,7 @@
 import Dexie from "dexie";
 import { seedDatabase, initialCategories } from "./seed.js";
 import { categoryDefaults } from "./catalog.js";
+import { mergePublishedCatalogAdditions } from "../services/publishedCatalogAdditions.js";
 
 const schemaV1 = {
   seasons: "id, year",
@@ -132,6 +133,11 @@ export function createDatabase(name = "KPopGalaDatabase") {
     });
 
   database.on("populate", () => seedDatabase(database));
+  database.on("ready", () =>
+    mergePublishedCatalogAdditions(database).catch((error) => {
+      console.warn("Could not merge published catalog additions.", error);
+    }),
+  );
 
   return database;
 }

@@ -16,7 +16,7 @@ export function empty(
 }
 export function photo(entity, className = "") {
   const src = safeUrl(entity.image);
-  const fit = entity.photoFit || (entity.entityType === "group" ? "contain" : "cover");
+  const fit = "cover";
   const axis = (value) =>
     value === "" || value === null || value === undefined || !Number.isFinite(Number(value))
       ? 50

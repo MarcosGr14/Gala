@@ -1,0 +1,237 @@
+{
+  "groups": [
+    {
+      "id": "group_qwer_20261012",
+      "name": "QWER",
+      "type": "band",
+      "photo": "https://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2026/02/11/bc339853-232a-40cb-9a22-94abc505f1a1.jpg",
+      "debutDate": "2023-10-18",
+      "status": "active",
+      "description": "Banda surcoreana de rock y pop formada por Chodan, Magenta, Hina y Siyeon bajo Tamago Production."
+    },
+    {
+      "id": "group_girlset_20261012",
+      "name": "GIRLSET",
+      "type": "gg",
+      "photo": "https://d1al7qj7ydfbpt.cloudfront.net/artists/girlset/galleries/1763582791046-0d1fe031.jpg",
+      "debutDate": "2025-08-29",
+      "status": "active",
+      "description": "Grupo global de JYP Entertainment integrado por Lexi, Camila, Kendall y Savanna. Antes promocionó como VCHA."
+    }
+  ],
+  "idols": [
+    {
+      "id": "idol_qwer_chodan_20261012",
+      "stageName": "Chodan",
+      "realName": "Hong Ji-hye",
+      "nationality": "South Korean",
+      "birthDate": "1998-11-01",
+      "gender": "female",
+      "photo": "https://qwerband.com/images/q_chodan.webp",
+      "debutDate": "2023-10-18",
+      "status": "active",
+      "roles": "Leader, drummer, sub-vocalist",
+      "description": "Integrante de QWER."
+    },
+    {
+      "id": "idol_qwer_magenta_20261012",
+      "stageName": "Magenta",
+      "realName": "Lee Ah-hee",
+      "nationality": "South Korean",
+      "birthDate": "1997-06-02",
+      "gender": "female",
+      "photo": "https://qwerband.com/images/w_magenta.webp",
+      "debutDate": "2023-10-18",
+      "status": "active",
+      "roles": "Bassist",
+      "description": "Integrante de QWER."
+    },
+    {
+      "id": "idol_qwer_hina_20261012",
+      "stageName": "Hina",
+      "realName": "Jang Na-young",
+      "nationality": "South Korean",
+      "birthDate": "2001-01-30",
+      "gender": "female",
+      "photo": "https://qwerband.com/images/e_hina.webp",
+      "debutDate": "2023-10-18",
+      "status": "active",
+      "roles": "Guitarist, keyboardist, maknae",
+      "description": "Integrante de QWER."
+    },
+    {
+      "id": "idol_qwer_siyeon_20261012",
+      "stageName": "Siyeon",
+      "realName": "Lee Si-yeon",
+      "nationality": "South Korean",
+      "birthDate": "2000-05-16",
+      "gender": "female",
+      "photo": "https://qwerband.com/images/r_siyeon.webp",
+      "debutDate": "2023-10-18",
+      "status": "active",
+      "roles": "Main vocalist, guitarist",
+      "description": "Integrante de QWER; anteriormente formó parte de NMB48."
+    },
+    {
+      "id": "idol_girlset_lexi_20261012",
+      "stageName": "Lexi",
+      "realName": "Lexus Vang",
+      "nationality": "American",
+      "birthDate": "2005-11-22",
+      "gender": "female",
+      "photo": "https://d1meds70430yck.cloudfront.net/artists/girlset/profiles/1763582560009-202c82b9.jpg",
+      "debutDate": "2023-09-22",
+      "status": "active",
+      "description": "Integrante de GIRLSET y exintegrante de VCHA."
+    },
+    {
+      "id": "idol_girlset_camila_20261012",
+      "stageName": "Camila",
+      "realName": "Camila Ribeaux Valdes",
+      "nationality": "Canadian-Cuban",
+      "birthDate": "2005-08-10",
+      "gender": "female",
+      "photo": "https://d1meds70430yck.cloudfront.net/artists/girlset/profiles/1763582567177-026b0987.jpg",
+      "debutDate": "2023-09-22",
+      "status": "active",
+      "description": "Integrante de GIRLSET y exintegrante de VCHA."
+    },
+    {
+      "id": "idol_girlset_kendall_20261012",
+      "stageName": "Kendall",
+      "realName": "Kendall Ebeling",
+      "nationality": "American",
+      "birthDate": "2006-06-01",
+      "gender": "female",
+      "photo": "https://d1meds70430yck.cloudfront.net/artists/girlset/profiles/1763582587957-1cf0ad78.jpg",
+      "debutDate": "2023-09-22",
+      "status": "active",
+      "description": "Integrante de GIRLSET y exintegrante de VCHA."
+    },
+    {
+      "id": "idol_girlset_savanna_20261012",
+      "stageName": "Savanna",
+      "realName": "Savanna Collins",
+      "nationality": "American",
+      "birthDate": "2006-07-26",
+      "gender": "female",
+      "photo": "https://d1meds70430yck.cloudfront.net/artists/girlset/profiles/1763582580509-0e073acd.jpg",
+      "debutDate": "2023-09-22",
+      "status": "active",
+      "description": "Integrante de GIRLSET y exintegrante de VCHA."
+    },
+    {
+      "id": "idol_yves_20261012",
+      "stageName": "Yves",
+      "realName": "Ha Soo-young",
+      "nationality": "South Korean",
+      "birthDate": "1997-05-24",
+      "gender": "female",
+      "photo": "https://cdn.kpopping.com/idols/Yves/profile.webp?v=1783477678185",
+      "debutDate": "2024-05-29",
+      "status": "active",
+      "roles": "Soloist, singer-songwriter, producer",
+      "description": "Cantante y productora surcoreana. Inició su carrera solista con el EP LOOP bajo PAIX PER MIL."
+    },
+    {
+      "id": "idol_bi_20261012",
+      "stageName": "B.I",
+      "realName": "Kim Han-bin",
+      "nationality": "South Korean",
+      "birthDate": "1996-10-22",
+      "gender": "male",
+      "photo": "https://i.pinimg.com/736x/cd/66/b7/cd66b702c98f27f593602668ee94062c.jpg",
+      "debutDate": "2021-03-19",
+      "status": "active",
+      "roles": "Soloist, singer-songwriter, rapper, producer",
+      "description": "Cantante, compositor y productor surcoreano; fue integrante y líder de iKON.",
+      "matchNames": [
+        "B.I",
+        "KIM HANBIN"
+      ]
+    },
+    {
+      "id": "idol_evan_20261012",
+      "matchNames": [
+        "HEESEUNG",
+        "LEE HEESEUNG"
+      ],
+      "stageName": "EVAN",
+      "realName": "Lee Hee-seung",
+      "nationality": "South Korean",
+      "birthDate": "2001-10-15",
+      "gender": "male",
+      "photo": "https://d1pod9gflbwpzj.cloudfront.net/artist/d6cf2c20-ead0-41d6-b4b2-7cec40eadc73.jpg",
+      "debutDate": "2026-06-22",
+      "status": "active",
+      "roles": "Soloist, vocalist, songwriter, producer",
+      "description": "Cantante y compositor surcoreano. Debutó como solista bajo el nombre EVAN con el sencillo digital Ride or Die."
+    }
+  ],
+  "memberships": [
+    {
+      "id": "membership_qwer_chodan_20261012",
+      "idolId": "idol_qwer_chodan_20261012",
+      "groupId": "group_qwer_20261012",
+      "role": "Leader, drummer, sub-vocalist",
+      "startDate": "2023-10-18",
+      "status": "current"
+    },
+    {
+      "id": "membership_qwer_magenta_20261012",
+      "idolId": "idol_qwer_magenta_20261012",
+      "groupId": "group_qwer_20261012",
+      "role": "Bassist",
+      "startDate": "2023-10-18",
+      "status": "current"
+    },
+    {
+      "id": "membership_qwer_hina_20261012",
+      "idolId": "idol_qwer_hina_20261012",
+      "groupId": "group_qwer_20261012",
+      "role": "Guitarist, keyboardist",
+      "startDate": "2023-10-18",
+      "status": "current"
+    },
+    {
+      "id": "membership_qwer_siyeon_20261012",
+      "idolId": "idol_qwer_siyeon_20261012",
+      "groupId": "group_qwer_20261012",
+      "role": "Main vocalist, guitarist",
+      "startDate": "2023-10-18",
+      "status": "current"
+    },
+    {
+      "id": "membership_girlset_lexi_20261012",
+      "idolId": "idol_girlset_lexi_20261012",
+      "groupId": "group_girlset_20261012",
+      "role": "Member",
+      "startDate": "2025-08-07",
+      "status": "current"
+    },
+    {
+      "id": "membership_girlset_camila_20261012",
+      "idolId": "idol_girlset_camila_20261012",
+      "groupId": "group_girlset_20261012",
+      "role": "Member",
+      "startDate": "2025-08-07",
+      "status": "current"
+    },
+    {
+      "id": "membership_girlset_kendall_20261012",
+      "idolId": "idol_girlset_kendall_20261012",
+      "groupId": "group_girlset_20261012",
+      "role": "Member",
+      "startDate": "2025-08-07",
+      "status": "current"
+    },
+    {
+      "id": "membership_girlset_savanna_20261012",
+      "idolId": "idol_girlset_savanna_20261012",
+      "groupId": "group_girlset_20261012",
+      "role": "Member",
+      "startDate": "2025-08-07",
+      "status": "current"
+    }
+  ]
+}
