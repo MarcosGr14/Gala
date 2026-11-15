@@ -45,7 +45,10 @@ export async function mergePublishedCatalogAdditions(database) {
       for (const entry of additions.idols || []) {
         const aliases = [entry.stageName, entry.realName, ...(entry.matchNames || [])].map(normalize).filter(Boolean);
         const current = existingIdols.find((row) =>
-          [row.stageName, row.realName].map(normalize).some((name) => aliases.includes(name)),
+          [row.stageName, row.realName]
+            .map(normalize)
+            .filter(Boolean)
+            .some((name) => aliases.includes(name)),
         );
         if (current) {
           idolIds.set(entry.id, current.id);
