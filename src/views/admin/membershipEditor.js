@@ -9,7 +9,8 @@ export function createMembershipEditor(type, artist, data) {
   const partnerKey = partnerType === "group" ? "groupId" : "idolId",
     table = partnerType === "group" ? "groups" : "idols";
   const index = createIndex(data),
-    drafts = [];
+    drafts = [],
+    deleted = new Map();
   const element = document.createElement("section");
   element.className = "membership-editor";
   element.innerHTML =
@@ -90,12 +91,13 @@ export function createMembershipEditor(type, artist, data) {
       }),
     };
     drafts.push(draft);
-    if (!previous) {
+    {
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = "text-link";
-      remove.textContent = "Remove unsaved membership";
+      remove.textContent = previous ? "Remove this group link" : "Remove unsaved membership";
       remove.onclick = () => {
+        if (previous) deleted.set(previous.id, previous);
         drafts.splice(drafts.indexOf(draft), 1);
         row.remove();
       };
@@ -118,5 +120,6 @@ export function createMembershipEditor(type, artist, data) {
             ),
         )
         .map((d) => d.after),
+    getDeletions: () => [...deleted.values()],
   };
 }

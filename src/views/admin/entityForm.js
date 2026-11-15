@@ -129,7 +129,8 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
       x = form.elements.namedItem("photoPositionX")?.value ?? 50,
       y = form.elements.namedItem("photoPositionY")?.value ?? 50,
       fit = "cover";
-    image.src = src || "";
+    if (src) image.src = src;
+    else image.removeAttribute("src");
     image.hidden = !src;
     preview.classList.toggle("fit-contain", fit === "contain");
     image.style.objectPosition = `${x}% ${y}%`;
@@ -187,7 +188,7 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
         }
       }
       const saved = ["idol", "group"].includes(type)
-        ? await saveArtist(type, input, membershipEditor?.getChanges() || [])
+        ? await saveArtist(type, input, membershipEditor?.getChanges() || [], undefined, membershipEditor?.getDeletions() || [])
         : await saveRecord(type, input);
       dialog.close();
       toast(definition.label + " saved.");

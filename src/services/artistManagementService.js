@@ -164,6 +164,7 @@ export async function saveArtist(
   input,
   membershipChanges = [],
   database = db,
+  membershipDeletions = [],
 ) {
   tableFor(type);
   return database.transaction(
@@ -193,6 +194,15 @@ export async function saveArtist(
           "membership",
           { ...change, [owner]: artist.id },
           database,
+        );
+      }
+      for (const membership of membershipDeletions) {
+        const previous = await database.memberships.get(membership.id);
+        if (!previous || previous[owner] !== artist.id)
+          throw new Error("Membership does not belong to this artist.");
+        await database.memberships.delete(previous.id);
+        await database.auditLog.add(
+          auditEntry("membership removed", "membership", previous.id, previous, null),
         );
       }
       return artist;
