@@ -17,6 +17,84 @@
       "debutDate": "2025-08-29",
       "status": "active",
       "description": "Grupo global de JYP Entertainment integrado por Lexi, Camila, Kendall y Savanna. Antes promocionó como VCHA."
+    },
+    {
+      "name": "NCT 127",
+      "type": "bg",
+      "photo": "https://i.pinimg.com/736x/82/f7/26/82f72673597bf8d06b26a25bef27173f.jpg",
+      "photoPositionX": 50,
+      "photoPositionY": 50,
+      "photoFit": "contain",
+      "debutDate": "2016-07-07",
+      "status": "active",
+      "description": "",
+      "id": "group_16e4f570-af18-4922-a644-4caae3030ec2",
+      "createdAt": "2026-10-04T02:09:56.964Z",
+      "updatedAt": "2026-10-04T02:09:56.964Z"
+    },
+    {
+      "name": "RED VELVET",
+      "type": "gg",
+      "photo": "https://i.pinimg.com/736x/e7/52/c5/e752c58b9d60cb4b800cd2428dc43f99.jpg",
+      "photoPositionX": 50,
+      "photoPositionY": 50,
+      "photoFit": "cover",
+      "debutDate": "2014-08-01",
+      "status": "active",
+      "description": "Es un grupo femenino surcoreano formado por SM Entertainment.",
+      "id": "group_47f3d891-d911-4f48-8622-74e79ef94282",
+      "createdAt": "2026-11-15T21:28:40.209Z",
+      "updatedAt": "2026-11-15T21:28:40.209Z"
+    },
+    {
+      "name": "ATEEZ",
+      "type": "bg",
+      "photo": "https://i.pinimg.com/736x/30/47/ea/3047eab509dc8cdb6f698fac8fd370a9.jpg",
+      "photoPositionX": 50,
+      "photoPositionY": 50,
+      "photoFit": "cover",
+      "debutDate": "2018-10-24",
+      "status": "active",
+      "description": "Es un grupo masculino surcoreano formado por la compañía KQ Entertainment.",
+      "id": "group_e723a1e6-6571-47ae-af2d-4f54bff75288",
+      "createdAt": "2026-11-15T21:29:50.393Z",
+      "updatedAt": "2026-11-15T21:29:50.393Z"
+    },
+    {
+      "name": "IKON",
+      "type": "bg",
+      "photo": "https://i.pinimg.com/736x/98/31/48/98314813645ff5208e9ff6735735ccef.jpg",
+      "photoPositionX": 50,
+      "photoPositionY": 50,
+      "photoFit": "cover",
+      "debutDate": "2015-09-15",
+      "status": "active",
+      "description": "Es grupo masculino surcoreano de K-pop, hip-hop y R&B que debutó en 2015 bajo la agencia YG Entertainment, y que desde 2023 forma parte de la discográfica 143 Entertainment.",
+      "id": "group_3f6622c2-7c5b-418d-9a50-96c274f318f1",
+      "createdAt": "2026-11-15T21:27:23.629Z",
+      "updatedAt": "2026-11-15T21:27:23.629Z"
+    },
+    {
+      "name": "ALICE SYNDROME",
+      "type": "gg",
+      "photo": "https://i.pinimg.com/736x/64/cd/e9/64cde90d69cf77640a8bf34c8e83924a.jpg",
+      "photoPositionX": 50,
+      "photoPositionY": 50,
+      "photoFit": "cover",
+      "debutDate": "2025-11-05",
+      "status": "active",
+      "description": "Es un grupo de rock femenino surcoreano de cuatro integrantes bajo la agencia D-Nation Entertainment .",
+      "id": "group_20bb2147-0723-4532-8d2c-e93699c17d8e",
+      "createdAt": "2026-11-15T21:31:03.963Z",
+      "updatedAt": "2026-11-15T21:31:03.963Z"
+    },
+    {
+      "id": "group_got7_20261115",
+      "name": "GOT7",
+      "type": "bg",
+      "debutDate": "2014-01-16",
+      "status": "active",
+      "description": "Grupo surcoreano de siete integrantes."
     }
   ],
   "idols": [
@@ -31,7 +109,11 @@
       "debutDate": "2023-10-18",
       "status": "active",
       "roles": "Leader, drummer, sub-vocalist",
-      "description": "Integrante de QWER."
+      "description": "Integrante de QWER.",
+      "matchNames": [
+        "Chodan",
+        "Hong Ji-hye"
+      ]
     },
     {
       "id": "idol_qwer_magenta_20261012",
@@ -44,7 +126,11 @@
       "debutDate": "2023-10-18",
       "status": "active",
       "roles": "Bassist",
-      "description": "Integrante de QWER."
+      "description": "Integrante de QWER.",
+      "matchNames": [
+        "Magenta",
+        "Lee Ah-hee"
+      ]
     },
     {
       "id": "idol_qwer_hina_20261012",
@@ -57,7 +143,11 @@
       "debutDate": "2023-10-18",
       "status": "active",
       "roles": "Guitarist, keyboardist, maknae",
-      "description": "Integrante de QWER."
+      "description": "Integrante de QWER.",
+      "matchNames": [
+        "Hina",
+        "Jang Na-young"
+      ]
     },
     {
       "id": "idol_qwer_siyeon_20261012",
@@ -70,7 +160,11 @@
       "debutDate": "2023-10-18",
       "status": "active",
       "roles": "Main vocalist, guitarist",
-      "description": "Integrante de QWER; anteriormente formó parte de NMB48."
+      "description": "Integrante de QWER; anteriormente formó parte de NMB48.",
+      "matchNames": [
+        "Siyeon",
+        "Lee Si-yeon"
+      ]
     },
     {
       "id": "idol_girlset_lexi_20261012",
@@ -82,7 +176,11 @@
       "photo": "https://d1meds70430yck.cloudfront.net/artists/girlset/profiles/1763582560009-202c82b9.jpg",
       "debutDate": "2023-09-22",
       "status": "active",
-      "description": "Integrante de GIRLSET y exintegrante de VCHA."
+      "description": "Integrante de GIRLSET y exintegrante de VCHA.",
+      "matchNames": [
+        "Lexi",
+        "Lexus Vang"
+      ]
     },
     {
       "id": "idol_girlset_camila_20261012",
@@ -94,7 +192,11 @@
       "photo": "https://d1meds70430yck.cloudfront.net/artists/girlset/profiles/1763582567177-026b0987.jpg",
       "debutDate": "2023-09-22",
       "status": "active",
-      "description": "Integrante de GIRLSET y exintegrante de VCHA."
+      "description": "Integrante de GIRLSET y exintegrante de VCHA.",
+      "matchNames": [
+        "Camila",
+        "Camila Ribeaux Valdes"
+      ]
     },
     {
       "id": "idol_girlset_kendall_20261012",
@@ -106,7 +208,11 @@
       "photo": "https://d1meds70430yck.cloudfront.net/artists/girlset/profiles/1763582587957-1cf0ad78.jpg",
       "debutDate": "2023-09-22",
       "status": "active",
-      "description": "Integrante de GIRLSET y exintegrante de VCHA."
+      "description": "Integrante de GIRLSET y exintegrante de VCHA.",
+      "matchNames": [
+        "Kendall",
+        "Kendall Ebeling"
+      ]
     },
     {
       "id": "idol_girlset_savanna_20261012",
@@ -118,7 +224,11 @@
       "photo": "https://d1meds70430yck.cloudfront.net/artists/girlset/profiles/1763582580509-0e073acd.jpg",
       "debutDate": "2023-09-22",
       "status": "active",
-      "description": "Integrante de GIRLSET y exintegrante de VCHA."
+      "description": "Integrante de GIRLSET y exintegrante de VCHA.",
+      "matchNames": [
+        "Savanna",
+        "Savanna Collins"
+      ]
     },
     {
       "id": "idol_yves_20261012",
@@ -131,7 +241,11 @@
       "debutDate": "2024-05-29",
       "status": "active",
       "roles": "Soloist, singer-songwriter, producer",
-      "description": "Cantante y productora surcoreana. Inició su carrera solista con el EP LOOP bajo PAIX PER MIL."
+      "description": "Cantante y productora surcoreana. Inició su carrera solista con el EP LOOP bajo PAIX PER MIL.",
+      "matchNames": [
+        "Yves",
+        "Ha Soo-young"
+      ]
     },
     {
       "id": "idol_bi_20261012",
@@ -148,13 +262,15 @@
       "matchNames": [
         "B.I",
         "KIM HANBIN"
-      ]
+      ],
+      "isSoloist": true
     },
     {
       "id": "idol_evan_20261012",
       "matchNames": [
         "HEESEUNG",
-        "LEE HEESEUNG"
+        "LEE HEESEUNG",
+        "Lee Hee-seung"
       ],
       "stageName": "EVAN",
       "realName": "Lee Hee-seung",
@@ -165,7 +281,415 @@
       "debutDate": "2026-06-22",
       "status": "active",
       "roles": "Soloist, vocalist, songwriter, producer",
-      "description": "Cantante y compositor surcoreano. Debutó como solista bajo el nombre EVAN con el sencillo digital Ride or Die."
+      "description": "Cantante y compositor surcoreano. Debutó como solista bajo el nombre EVAN con el sencillo digital Ride or Die.",
+      "isSoloist": true
+    },
+    {
+      "id": "idol_nct_johnny_20261115",
+      "stageName": "JOHNNY",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de NCT 127.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "John Suh",
+      "birthDate": "1995-02-09"
+    },
+    {
+      "id": "idol_nct_taeyong_20261115",
+      "stageName": "TAEYONG",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de NCT 127.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Lee Tae-yong",
+      "birthDate": "1995-07-01"
+    },
+    {
+      "id": "idol_nct_yuta_20261115",
+      "stageName": "YUTA",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de NCT 127.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Nakamoto Yuta",
+      "birthDate": "1995-10-26"
+    },
+    {
+      "id": "idol_nct_jaehyun_20261115",
+      "stageName": "JAEHYUN",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de NCT 127.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Jung Jae-hyun",
+      "birthDate": "1997-02-14"
+    },
+    {
+      "id": "idol_nct_jungwoo_20261115",
+      "stageName": "JUNGWOO",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de NCT 127.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Kim Jung-woo",
+      "birthDate": "1998-02-19"
+    },
+    {
+      "id": "idol_redvelvet_irene_20261115",
+      "stageName": "IRENE",
+      "gender": "female",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de RED VELVET.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Bae Joo-hyun",
+      "birthDate": "1991-03-29"
+    },
+    {
+      "id": "idol_redvelvet_seulgi_20261115",
+      "stageName": "SEULGI",
+      "gender": "female",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de RED VELVET.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Kang Seul-gi",
+      "birthDate": "1994-02-10"
+    },
+    {
+      "id": "idol_redvelvet_wendy_20261115",
+      "stageName": "WENDY",
+      "gender": "female",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de RED VELVET.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Son Seung-wan",
+      "birthDate": "1994-02-21"
+    },
+    {
+      "id": "idol_redvelvet_joy_20261115",
+      "stageName": "JOY",
+      "gender": "female",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de RED VELVET.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Park Soo-young",
+      "birthDate": "1996-09-03"
+    },
+    {
+      "id": "idol_redvelvet_yeri_20261115",
+      "stageName": "YERI",
+      "gender": "female",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de RED VELVET.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Kim Ye-rim",
+      "birthDate": "1999-03-05"
+    },
+    {
+      "id": "idol_ateez_wooyoung_20261115",
+      "stageName": "WOOYOUNG",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de ATEEZ.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Jung Woo-young",
+      "birthDate": "1999-11-26"
+    },
+    {
+      "id": "idol_ateez_jongho_20261115",
+      "stageName": "JONGHO",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de ATEEZ.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Choi Jong-ho",
+      "birthDate": "2000-10-12"
+    },
+    {
+      "id": "idol_ikon_song_20261115",
+      "stageName": "SONG",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de IKON.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Song Yun-hyeong",
+      "birthDate": "1995-02-08"
+    },
+    {
+      "id": "idol_ikon_bobby_20261115",
+      "stageName": "BOBBY",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de IKON.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Kim Ji-won",
+      "birthDate": "1995-12-21"
+    },
+    {
+      "id": "idol_ikon_june_20261115",
+      "stageName": "JU-NE",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de IKON.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Koo Jun-hoe",
+      "birthDate": "1997-03-31"
+    },
+    {
+      "id": "idol_ikon_chan_20261115",
+      "stageName": "CHAN",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de IKON.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Jung Chan-woo",
+      "birthDate": "1998-01-26"
+    },
+    {
+      "id": "idol_alicesyndrome_awon_20261115",
+      "stageName": "AWON",
+      "gender": "female",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de ALICE SYNDROME.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg"
+    },
+    {
+      "id": "idol_alicesyndrome_taira_20261115",
+      "stageName": "TAIRA",
+      "gender": "female",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de ALICE SYNDROME.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg"
+    },
+    {
+      "id": "idol_alicesyndrome_sebeen_20261115",
+      "stageName": "SEBEEN",
+      "gender": "female",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de ALICE SYNDROME.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg"
+    },
+    {
+      "id": "idol_alicesyndrome_jeongmin_20261115",
+      "stageName": "JEONGMIN",
+      "gender": "female",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de ALICE SYNDROME.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg"
+    },
+    {
+      "id": "idol_got_jayb_20261115",
+      "stageName": "JAY B",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de GOT7.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Lim Jae-beom",
+      "birthDate": "1994-01-06"
+    },
+    {
+      "id": "idol_got_jackson_20261115",
+      "stageName": "JACKSON",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de GOT7.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Jackson Wang",
+      "birthDate": "1994-03-28"
+    },
+    {
+      "id": "idol_got_jinyoung_20261115",
+      "stageName": "JINYOUNG",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de GOT7.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Park Jin-young",
+      "birthDate": "1994-09-22"
+    },
+    {
+      "id": "idol_got_youngjae_20261115",
+      "stageName": "YOUNGJAE",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de GOT7.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Choi Young-jae",
+      "birthDate": "1996-09-17"
+    },
+    {
+      "id": "idol_got_bambam_20261115",
+      "stageName": "BAMBAM",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de GOT7.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Kunpimook Bhuwakul",
+      "birthDate": "1997-05-02"
+    },
+    {
+      "id": "idol_got_yugyeom_20261115",
+      "stageName": "YUGYEOM",
+      "gender": "male",
+      "nationality": "South Korean",
+      "status": "active",
+      "roles": "Member",
+      "description": "Integrante de GOT7.",
+      "matchNames": [
+        "SIK-K"
+      ],
+      "photo": "https://i.pinimg.com/736x/1b/a2/e4/1ba2e4ba3b31f7389441a323f27544ae.jpg",
+      "realName": "Kim Yu-gyeom",
+      "birthDate": "1997-11-17"
+    },
+    {
+      "id": "idol_kim_ji_won_20261115",
+      "stageName": "Kim Ji-won",
+      "realName": "Kim Ji-won",
+      "nationality": "South Korean",
+      "birthDate": "1992-10-19",
+      "gender": "female",
+      "status": "active",
+      "isSoloist": true,
+      "roles": "Actress",
+      "description": "Actriz surcoreana.",
+      "personType": "actress"
+    },
+    {
+      "id": "idol_heeseung_ea52ecf8",
+      "stageName": "HEESEUNG",
+      "realName": "LEE HEESEUNG",
+      "matchNames": [
+        "EVAN",
+        "Lee Hee-seung"
+      ],
+      "isSoloist": true,
+      "personType": "soloist",
+      "roles": "Soloist; former ENHYPEN member"
     }
   ],
   "memberships": [
@@ -232,6 +756,330 @@
       "role": "Member",
       "startDate": "2025-08-07",
       "status": "current"
+    },
+    {
+      "id": "membership_idol_nct_johnny_20261115",
+      "idolId": "idol_nct_johnny_20261115",
+      "groupId": "group_16e4f570-af18-4922-a644-4caae3030ec2",
+      "role": "Member",
+      "startDate": "2016-07-07",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_nct_taeyong_20261115",
+      "idolId": "idol_nct_taeyong_20261115",
+      "groupId": "group_16e4f570-af18-4922-a644-4caae3030ec2",
+      "role": "Member",
+      "startDate": "2016-07-07",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_nct_yuta_20261115",
+      "idolId": "idol_nct_yuta_20261115",
+      "groupId": "group_16e4f570-af18-4922-a644-4caae3030ec2",
+      "role": "Member",
+      "startDate": "2016-07-07",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_doyoung_f269edb0",
+      "idolId": "idol_doyoung_f269edb0",
+      "groupId": "group_16e4f570-af18-4922-a644-4caae3030ec2",
+      "role": "Member",
+      "startDate": "2016-07-07",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_nct_jaehyun_20261115",
+      "idolId": "idol_nct_jaehyun_20261115",
+      "groupId": "group_16e4f570-af18-4922-a644-4caae3030ec2",
+      "role": "Member",
+      "startDate": "2016-07-07",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_nct_jungwoo_20261115",
+      "idolId": "idol_nct_jungwoo_20261115",
+      "groupId": "group_16e4f570-af18-4922-a644-4caae3030ec2",
+      "role": "Member",
+      "startDate": "2016-07-07",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_haechan_bc31d62e",
+      "idolId": "idol_haechan_bc31d62e",
+      "groupId": "group_16e4f570-af18-4922-a644-4caae3030ec2",
+      "role": "Member",
+      "startDate": "2016-07-07",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_redvelvet_irene_20261115",
+      "idolId": "idol_redvelvet_irene_20261115",
+      "groupId": "group_47f3d891-d911-4f48-8622-74e79ef94282",
+      "role": "Member",
+      "startDate": "2014-08-01",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_redvelvet_seulgi_20261115",
+      "idolId": "idol_redvelvet_seulgi_20261115",
+      "groupId": "group_47f3d891-d911-4f48-8622-74e79ef94282",
+      "role": "Member",
+      "startDate": "2014-08-01",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_redvelvet_wendy_20261115",
+      "idolId": "idol_redvelvet_wendy_20261115",
+      "groupId": "group_47f3d891-d911-4f48-8622-74e79ef94282",
+      "role": "Member",
+      "startDate": "2014-08-01",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_redvelvet_joy_20261115",
+      "idolId": "idol_redvelvet_joy_20261115",
+      "groupId": "group_47f3d891-d911-4f48-8622-74e79ef94282",
+      "role": "Member",
+      "startDate": "2014-08-01",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_redvelvet_yeri_20261115",
+      "idolId": "idol_redvelvet_yeri_20261115",
+      "groupId": "group_47f3d891-d911-4f48-8622-74e79ef94282",
+      "role": "Member",
+      "startDate": "2014-08-01",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_1620bbf7-9e0a-451d-8115-d511caf79c95",
+      "idolId": "idol_1620bbf7-9e0a-451d-8115-d511caf79c95",
+      "groupId": "group_e723a1e6-6571-47ae-af2d-4f54bff75288",
+      "role": "Member",
+      "startDate": "2018-10-24",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_c68cb6dd-0d46-4a4f-ae81-1d2b5367a292",
+      "idolId": "idol_c68cb6dd-0d46-4a4f-ae81-1d2b5367a292",
+      "groupId": "group_e723a1e6-6571-47ae-af2d-4f54bff75288",
+      "role": "Member",
+      "startDate": "2018-10-24",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_f1d7879f-3636-47c3-9750-c5ee1d7fdba3",
+      "idolId": "idol_f1d7879f-3636-47c3-9750-c5ee1d7fdba3",
+      "groupId": "group_e723a1e6-6571-47ae-af2d-4f54bff75288",
+      "role": "Member",
+      "startDate": "2018-10-24",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_9a0d22c9-6d08-4dc1-930d-7a24a8fb3774",
+      "idolId": "idol_9a0d22c9-6d08-4dc1-930d-7a24a8fb3774",
+      "groupId": "group_e723a1e6-6571-47ae-af2d-4f54bff75288",
+      "role": "Member",
+      "startDate": "2018-10-24",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_0dbcf6ba-c13f-4c04-b57f-649d551a6f3a",
+      "idolId": "idol_0dbcf6ba-c13f-4c04-b57f-649d551a6f3a",
+      "groupId": "group_e723a1e6-6571-47ae-af2d-4f54bff75288",
+      "role": "Member",
+      "startDate": "2018-10-24",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_404b1ff6-d129-4765-b5f8-6471eff59077",
+      "idolId": "idol_404b1ff6-d129-4765-b5f8-6471eff59077",
+      "groupId": "group_e723a1e6-6571-47ae-af2d-4f54bff75288",
+      "role": "Member",
+      "startDate": "2018-10-24",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_ateez_wooyoung_20261115",
+      "idolId": "idol_ateez_wooyoung_20261115",
+      "groupId": "group_e723a1e6-6571-47ae-af2d-4f54bff75288",
+      "role": "Member",
+      "startDate": "2018-10-24",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_ateez_jongho_20261115",
+      "idolId": "idol_ateez_jongho_20261115",
+      "groupId": "group_e723a1e6-6571-47ae-af2d-4f54bff75288",
+      "role": "Member",
+      "startDate": "2018-10-24",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_jay_ea52ecf8",
+      "idolId": "idol_jay_ea52ecf8",
+      "groupId": "group_3f6622c2-7c5b-418d-9a50-96c274f318f1",
+      "role": "Member",
+      "startDate": "2015-09-15",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_ikon_song_20261115",
+      "idolId": "idol_ikon_song_20261115",
+      "groupId": "group_3f6622c2-7c5b-418d-9a50-96c274f318f1",
+      "role": "Member",
+      "startDate": "2015-09-15",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_ikon_bobby_20261115",
+      "idolId": "idol_ikon_bobby_20261115",
+      "groupId": "group_3f6622c2-7c5b-418d-9a50-96c274f318f1",
+      "role": "Member",
+      "startDate": "2015-09-15",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_dk_3888971e",
+      "idolId": "idol_dk_3888971e",
+      "groupId": "group_3f6622c2-7c5b-418d-9a50-96c274f318f1",
+      "role": "Member",
+      "startDate": "2015-09-15",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_ikon_june_20261115",
+      "idolId": "idol_ikon_june_20261115",
+      "groupId": "group_3f6622c2-7c5b-418d-9a50-96c274f318f1",
+      "role": "Member",
+      "startDate": "2015-09-15",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_ikon_chan_20261115",
+      "idolId": "idol_ikon_chan_20261115",
+      "groupId": "group_3f6622c2-7c5b-418d-9a50-96c274f318f1",
+      "role": "Member",
+      "startDate": "2015-09-15",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_alicesyndrome_awon_20261115",
+      "idolId": "idol_alicesyndrome_awon_20261115",
+      "groupId": "group_20bb2147-0723-4532-8d2c-e93699c17d8e",
+      "role": "Member",
+      "startDate": "2026-08-25",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_alicesyndrome_taira_20261115",
+      "idolId": "idol_alicesyndrome_taira_20261115",
+      "groupId": "group_20bb2147-0723-4532-8d2c-e93699c17d8e",
+      "role": "Member",
+      "startDate": "2026-08-25",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_alicesyndrome_sebeen_20261115",
+      "idolId": "idol_alicesyndrome_sebeen_20261115",
+      "groupId": "group_20bb2147-0723-4532-8d2c-e93699c17d8e",
+      "role": "Member",
+      "startDate": "2026-08-25",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_alicesyndrome_jeongmin_20261115",
+      "idolId": "idol_alicesyndrome_jeongmin_20261115",
+      "groupId": "group_20bb2147-0723-4532-8d2c-e93699c17d8e",
+      "role": "Member",
+      "startDate": "2026-08-25",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_got_jayb_20261115",
+      "idolId": "idol_got_jayb_20261115",
+      "groupId": "group_got7_20261115",
+      "role": "Member",
+      "startDate": "2014-01-16",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_mark_bc31d62e",
+      "idolId": "idol_mark_bc31d62e",
+      "groupId": "group_got7_20261115",
+      "role": "Member",
+      "startDate": "2014-01-16",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_got_jackson_20261115",
+      "idolId": "idol_got_jackson_20261115",
+      "groupId": "group_got7_20261115",
+      "role": "Member",
+      "startDate": "2014-01-16",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_got_jinyoung_20261115",
+      "idolId": "idol_got_jinyoung_20261115",
+      "groupId": "group_got7_20261115",
+      "role": "Member",
+      "startDate": "2014-01-16",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_got_youngjae_20261115",
+      "idolId": "idol_got_youngjae_20261115",
+      "groupId": "group_got7_20261115",
+      "role": "Member",
+      "startDate": "2014-01-16",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_got_bambam_20261115",
+      "idolId": "idol_got_bambam_20261115",
+      "groupId": "group_got7_20261115",
+      "role": "Member",
+      "startDate": "2014-01-16",
+      "status": "current"
+    },
+    {
+      "id": "membership_idol_got_yugyeom_20261115",
+      "idolId": "idol_got_yugyeom_20261115",
+      "groupId": "group_got7_20261115",
+      "role": "Member",
+      "startDate": "2014-01-16",
+      "status": "current"
+    },
+    {
+      "id": "membership_bi_ikon_former",
+      "idolId": "idol_bi_20261012",
+      "groupId": "group_3f6622c2-7c5b-418d-9a50-96c274f318f1",
+      "role": "Former member",
+      "startDate": "2015-09-15",
+      "endDate": "2019-06-12",
+      "status": "former"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat_daesang_goty",
+      "winnerType": "mixedEntity",
+      "displayName": "Artist of the Year",
+      "name": "Artist of the Year",
+      "genderRestriction": ""
+    },
+    {
+      "id": "cat_female_rookie",
+      "winnerType": "mixedEntity",
+      "genderRestriction": ""
+    },
+    {
+      "id": "cat_male_rookie",
+      "winnerType": "mixedEntity",
+      "genderRestriction": ""
     }
   ]
 }

@@ -11,12 +11,18 @@ export async function mergePublishedCatalogAdditions(database) {
     database.groups,
     database.idols,
     database.memberships,
+    database.categories,
     async () => {
       const existingGroups = await database.groups.toArray();
       const existingIdols = await database.idols.toArray();
       const groupIds = new Map();
       const idolIds = new Map();
       const now = new Date().toISOString();
+
+      for (const entry of additions.categories || []) {
+        const current = await database.categories.get(entry.id);
+        if (current) await database.categories.update(entry.id, entry);
+      }
 
       for (const entry of additions.groups || []) {
         const current = existingGroups.find((row) => normalize(row.name) === normalize(entry.name));

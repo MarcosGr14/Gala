@@ -31,6 +31,7 @@ export function countIncompleteProfiles(data) {
   const counts = Object.fromEntries(fields.map(([key]) => [key, 0]));
   let profiles = 0;
   for (const idol of data.idols || []) {
+    if (idol.isSoloist || idol.personType === "actor" || idol.personType === "actress") continue;
     const missing = missingFields(idol, links.get(idol.id) || []);
     if (missing.length) profiles++;
     for (const field of missing) counts[field.key]++;
@@ -54,6 +55,7 @@ export function renderIncompleteProfiles(
   }
   const summary = countIncompleteProfiles(data);
   const rows = (data.idols || [])
+    .filter((row) => !row.isSoloist && !["actor", "actress"].includes(row.personType))
     .map((row) => {
       const links = memberships.get(row.id) || [],
         missing = missingFields(row, links),

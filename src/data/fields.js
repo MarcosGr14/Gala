@@ -23,6 +23,8 @@ export const FORMS = {
       text("nationality", "Nationality"),
       date("birthDate", "Birth date"),
       select("gender", "Gender", ["", "female", "male", "other"]),
+      select("personType", "Person type", ["idol", "soloist", "actor", "actress"]),
+      { key: "isSoloist", label: "Solo artist (exclude from incomplete profile checks)", type: "checkbox" },
       url("photo", "Photo URL"),
       range("photoPositionX", "Photo framing · horizontal"),
       range("photoPositionY", "Photo framing · vertical"),
