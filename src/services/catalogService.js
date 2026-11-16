@@ -131,7 +131,7 @@ export async function saveRecord(type, input, database = db) {
   if (!definition) throw new Error("Unknown entry type.");
   return database.transaction(
     "rw",
-    DATA_TABLES.map((t) => database.table(t)),
+    [...DATA_TABLES.map((t) => database.table(t)), database.restorePoints],
     async () => {
       const data = await loadSnapshot(database),
         index = createIndex(data);
@@ -146,30 +146,23 @@ export async function saveRecord(type, input, database = db) {
       };
       if (type === "category") record = categoryDefaults(record);
       validateRecord(type, record, index);
+      const categoryRulesChanged = type === "category" && before &&
+        ["winnerType", "winnerStructure", "genderRestriction", "userSlots"].some(
+          (key) => JSON.stringify(record[key]) !== JSON.stringify(before[key]),
+        );
+      if (categoryRulesChanged) {
+        const restorePoint = {
+          id: generateId("restore"),
+          createdAt: new Date().toISOString(),
+          data,
+        };
+        await database.restorePoints.add(restorePoint);
+      }
       if (
         type === "season" &&
         data.seasons.some((s) => s.year === record.year && s.id !== record.id)
       )
         throw new Error("That season already exists.");
-      if (
-        type === "category" &&
-        before &&
-        data.awardResults.some((a) => a.categoryId === before.id) &&
-        [
-          "winnerType",
-          "winnerStructure",
-          "genderRestriction",
-          "userSlots",
-        ].some(
-          (k) =>
-            (k !== "userSlots" ||
-              before.winnerStructure === "userGenderSlots") &&
-            JSON.stringify(record[k]) !== JSON.stringify(before[k]),
-        )
-      )
-        throw new Error(
-          "This category has results. Create a new category to change its winner rules.",
-        );
       if (
         type === "nomination" &&
         data.nominations.some(
