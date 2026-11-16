@@ -64,7 +64,10 @@ async function navigate() {
             "Use the navigation to continue exploring.",
           ),
       );
+    container.firstElementChild?.cleanup?.();
     container.replaceChildren(view);
+    if (view.restoreState) view.restoreState();
+    else window.scrollTo(0, 0);
     document.querySelectorAll("[data-route]").forEach((link) => {
       if (link.dataset.route === route)
         link.setAttribute("aria-current", "page");
@@ -88,7 +91,6 @@ async function navigate() {
 }
 window.addEventListener("hashchange", () => {
   navigate();
-  window.scrollTo({ top: 0 });
 });
 window.addEventListener("catalog-changed", () => {
   const view = document.querySelector("main > .page");

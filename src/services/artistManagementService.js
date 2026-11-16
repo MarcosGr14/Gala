@@ -136,7 +136,7 @@ export async function deleteArtistPermanently(type, id, database = db) {
   // Recheck inside the write transaction, after the user confirmation.
   return database.transaction(
     "rw",
-    DATA_TABLES.map((t) => database.table(t)),
+    [...DATA_TABLES.map((t) => database.table(t)), database.restorePoints],
     async () => {
       const before = await database.table(table).get(id);
       if (!before) throw new Error("Artist no longer exists.");

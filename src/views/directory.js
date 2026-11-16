@@ -2,6 +2,9 @@ import { page, heading, entityCard, empty } from "../components/ui.js";
 import { createIndex, resolveFromIndex } from "../services/entityService.js";
 
 export function renderDirectory(type, data) {
+  const stateKey = `gala-directory-${type}`;
+  let saved = {};
+  try { saved = JSON.parse(sessionStorage.getItem(stateKey) || "{}"); } catch {}
   const index = createIndex(data),
     table = type === "group" ? "groups" : "idols";
   const entities = data[table]
@@ -15,12 +18,17 @@ export function renderDirectory(type, data) {
     ) +
       `<div class="toolbar directory-filters"><label class="search-label">Search the archive<input data-search type="search" placeholder="Find a name, group, or detail…" aria-label="Search ${type === "group" ? "groups" : "artists"}"></label><label>${type === "group" ? "Group type" : "Gender"}<select data-kind-filter><option value="">All</option>${type === "group" ? '<option value="bg">Boy group</option><option value="gg">Girl group</option><option value="mixed">Mixed group</option><option value="band">Band</option><option value="subunit">Subunit</option>' : '<option value="female">Female</option><option value="male">Male</option><option value="other">Other / unspecified</option>'}</select></label><label>Sort<select data-sort><option value="name">Name A–Z</option><option value="name-desc">Name Z–A</option><option value="gender">Gender, then name</option><option value="oldest">Oldest debut</option><option value="newest">Newest debut</option>${type === "group" ? '<option value="type">Group type</option>' : '<option value="birth-oldest">Oldest first</option><option value="birth-youngest">Youngest first</option>'}</select></label><span class="small" data-count></span></div><div class="entity-grid" data-results></div>`,
   );
+  root.dataset.directoryType = type;
+  root.querySelector("[data-search]").value = saved.query || "";
+  root.querySelector("[data-kind-filter]").value = saved.kind || "";
+  root.querySelector("[data-sort]").value = saved.sort || "name";
   const records = new Map(data[table].map((row) => [row.id, row]));
   const normalized = (value) => String(value || "").toLocaleLowerCase();
   function render() {
     const query = normalized(root.querySelector("[data-search]").value.trim());
     const kind = root.querySelector("[data-kind-filter]").value;
     const sort = root.querySelector("[data-sort]").value;
+    try { sessionStorage.setItem(stateKey, JSON.stringify({ ...saved, query: root.querySelector("[data-search]").value, kind, sort })); } catch {}
     const rows = entities
       .filter((entity) => {
         const record = records.get(entity.id);
@@ -57,7 +65,7 @@ export function renderDirectory(type, data) {
       });
     root.querySelector("[data-count]").textContent = `${rows.length} entries`;
     root.querySelector("[data-results]").innerHTML = rows.length
-      ? rows.map(entityCard).join("")
+      ? rows.map((entity, position) => entityCard(entity, { eager: position < 6, priority: position === 0 })).join("")
       : empty(
           type === "group" ? "No groups found." : "No artists found.",
           "Adjust the filters or add an entry in Admin.",
@@ -67,5 +75,20 @@ export function renderDirectory(type, data) {
     control.addEventListener(control.matches("input") ? "input" : "change", render),
   );
   render();
+  let scrollTimer;
+  const stateController = new AbortController();
+  window.addEventListener("scroll", () => {
+    if (!root.isConnected) return;
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      try { sessionStorage.setItem(stateKey, JSON.stringify({ query: root.querySelector("[data-search]").value, kind: root.querySelector("[data-kind-filter]").value, sort: root.querySelector("[data-sort]").value, scrollY: window.scrollY })); } catch {}
+    }, 100);
+  }, { passive: true, signal: stateController.signal });
+  root.cleanup = () => {
+    try { sessionStorage.setItem(stateKey, JSON.stringify({ query: root.querySelector("[data-search]").value, kind: root.querySelector("[data-kind-filter]").value, sort: root.querySelector("[data-sort]").value, scrollY: window.scrollY })); } catch {}
+    stateController.abort();
+    clearTimeout(scrollTimer);
+  };
+  root.restoreState = () => requestAnimationFrame(() => window.scrollTo(0, Number(saved.scrollY) || 0));
   return root;
 }

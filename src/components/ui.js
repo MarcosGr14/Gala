@@ -14,7 +14,7 @@ export function empty(
 ) {
   return `<div class="empty"><span class="empty-star" aria-hidden="true">✦</span><h3>${e(title)}</h3><p>${e(detail)}</p><a class="text-link" href="#admin">Open Admin ↗</a></div>`;
 }
-export function photo(entity, className = "") {
+export function photo(entity, className = "", { eager = false, priority = false } = {}) {
   const src = safeUrl(entity.image);
   const fit = "cover";
   const axis = (value) =>
@@ -22,7 +22,7 @@ export function photo(entity, className = "") {
       ? 50
       : Math.max(0, Math.min(100, Number(value)));
   const position = `${axis(entity.photoPositionX)}% ${axis(entity.photoPositionY)}%`;
-  return `<div class="photo ${className}${fit === "contain" ? " fit-contain" : ""}">${src ? '<img src="' + e(src) + '" alt="' + e(entity.name) + '" loading="lazy" decoding="async" style="object-position:' + position + '">' : '<span class="monogram" aria-hidden="true">' + e(entity.name?.slice(0, 2).toUpperCase() || "KG") + "</span>"}</div>`;
+  return `<div class="photo ${className}${fit === "contain" ? " fit-contain" : ""}">${src ? '<img src="' + e(src) + '" alt="' + e(entity.name) + '" loading="' + (eager ? "eager" : "lazy") + '" decoding="async"' + (priority ? ' fetchpriority="high"' : '') + ' style="object-position:' + position + '">' : '<span class="monogram" aria-hidden="true">' + e(entity.name?.slice(0, 2).toUpperCase() || "KG") + "</span>"}</div>`;
 }
 export function entityHref(entity) {
   return (
@@ -35,8 +35,8 @@ export function entityHref(entity) {
 export function categoryHref(category) {
   return category?.id ? "#category/" + encodeURIComponent(category.id) : "#categories";
 }
-export function entityCard(entity) {
-  return `<a class="entity-card" href="${entityHref(entity)}">${photo(entity)}<div class="card-copy"><span class="eyebrow">${e(entity.subtitle)}</span><h3>${e(entity.name)}</h3><span class="text-link">Explore archive ↗</span></div></a>`;
+export function entityCard(entity, options = {}) {
+  return `<a class="entity-card" href="${entityHref(entity)}">${photo(entity, "", options)}<div class="card-copy"><span class="eyebrow">${e(entity.subtitle)}</span><h3>${e(entity.name)}</h3><span class="text-link">Explore archive ↗</span></div></a>`;
 }
 export function awardCard(award) {
   const isDaesang = award.tier === "daesang";
