@@ -5,7 +5,8 @@ import { escapeHtml as e } from "../utils/helpers.js";
 const metrics = {
   directWins: "Wins incl. songs & albums",
   directDaesangs: "Daesangs incl. songs & albums",
-  totalLegacyAwards: "Legacy awards",
+  totalLegacyAwards: "Group wins incl. members",
+  allWins: "All wins · incl. group members",
   associatedMemberWins: "Associated member wins",
   associatedDaesangs: "Associated Daesangs",
   legacyDaesangs: "Legacy Daesangs",
@@ -20,12 +21,12 @@ export function renderRecords(data) {
       "Records that endure.",
       "Explore direct wins, the legacy of a group, and the highest honors.",
     ) +
-      `<div class="toolbar"><label class="search-label">Search records<input type="search" data-search placeholder="Find an artist or group…"></label><label>Record<select data-metric>${Object.entries(
+      `<div class="toolbar"><label>Season<select data-season><option value="">All seasons · all-time</option>${[...data.seasons].sort((a,b) => b.year-a.year).map(s => '<option value="' + e(s.id) + '">' + e(s.year) + '</option>').join("")}</select></label><label class="search-label">Search records<input type="search" data-search placeholder="Find an artist or group…"></label><label>Record<select data-metric>${Object.entries(
         metrics,
       )
         .map(
           ([key, label]) =>
-            '<option value="' + key + '">' + label + "</option>",
+            '<option value="' + key + '"' + (key === "allWins" ? " selected" : "") + '>' + label + "</option>",
         )
         .join(
           "",
@@ -35,7 +36,8 @@ export function renderRecords(data) {
     const metric = root.querySelector("[data-metric]").value,
       type = root.querySelector("[data-type]").value,
       query = root.querySelector("[data-search]").value.trim().toLocaleLowerCase(),
-      order = root.querySelector("[data-order]").value;
+      order = root.querySelector("[data-order]").value,
+      seasonId = root.querySelector("[data-season]").value;
     const groupOnly = [
       "totalLegacyAwards",
       "associatedMemberWins",
@@ -43,7 +45,31 @@ export function renderRecords(data) {
       "legacyDaesangs",
     ].includes(metric);
     const rows = rankEntities(
-      stats.filter(
+      stats.map((row) => {
+        if (!seasonId) return row;
+        const awards = (row.entityType === "group" ? row.legacy : row.direct)
+          .filter((award) => award.seasonId === seasonId);
+        const associated = row.entityType === "group"
+          ? row.associated.filter((award) => award.seasonId === seasonId)
+          : [];
+        const direct = row.direct.filter((award) => award.seasonId === seasonId);
+        const daesangs = (items) => items.filter((award) => data.categories.find((category) => category.id === award.categoryId)?.tier === "daesang").length;
+        const seasonalMetric = {
+          directWins: direct.length,
+          directDaesangs: daesangs(direct),
+          totalLegacyAwards: awards.length,
+          allWins: awards.length,
+          associatedMemberWins: associated.length,
+          associatedDaesangs: daesangs(associated),
+          legacyDaesangs: daesangs(awards),
+          bestSeasonWins: awards.length,
+          categoriesWon: new Set(awards.map((award) => award.categoryId)).size,
+        }[metric];
+        return { ...row, [metric]: seasonalMetric, bestSeason: data.seasons.find((season) => season.id === seasonId)?.year };
+      }).map((row) => seasonId ? row : ({
+        ...row,
+        allWins: row.entityType === "group" ? row.totalLegacyAwards : row.directWins,
+      })).filter(
         (r) =>
           (!type || r.entityType === type) &&
           (!groupOnly || r.entityType === "group") &&
@@ -53,14 +79,15 @@ export function renderRecords(data) {
     );
     if (order === "name") rows.sort((a, b) => a.name.localeCompare(b.name));
     if (order === "gender") rows.sort((a, b) => String(a.gender || a.type || "other").localeCompare(String(b.gender || b.type || "other")) || a.name.localeCompare(b.name));
+    const seasonLabel = seasonId ? ` in ${data.seasons.find((season) => season.id === seasonId)?.year}` : " across all seasons";
     root.querySelector("[data-explainer]").textContent = groupOnly
-      ? "Group records include eligible historical member results, counted once per award."
-      : "Artist records include awards won directly and through their songs or albums. Shared results count once for each winning artist. Ties share a rank.";
+      ? `Group records${seasonLabel} include eligible member awards, counted once per result. Ties share a rank.`
+      : `Artist records${seasonLabel} include awards won directly and through their songs or albums. Shared results count once for each winning artist. Ties share a rank.`;
     root.querySelector("[data-rankings]").innerHTML = rows.length
       ? rows
           .map(
             (row) =>
-              `<a href="${entityHref(row)}" class="rank-row ${row.rank === 1 ? "rank-first" : ""}"><span class="rank-number">${String(row.rank).padStart(2, "0")}</span>${photo(row)}<div class="rank-name"><span class="eyebrow">${e(row.entityType)}</span><h3>${e(row.name)}</h3></div><div class="rank-value"><strong>${row.count}</strong><span>${metric === "bestSeasonWins" ? e(row.bestSeason) : e(metrics[metric])}</span></div><span class="rank-arrow">↗</span></a>`,
+              `<a href="${entityHref(row)}" class="rank-row ${row.rank === 1 ? "rank-first" : ""}"><span class="rank-number">${String(row.rank).padStart(2, "0")}</span>${photo(row)}<div class="rank-name"><span class="eyebrow">${e(row.entityType)}</span><h3>${e(row.name)}</h3></div><div class="rank-value"><strong>${row.count}</strong><span>${metric === "bestSeasonWins" && !seasonId ? e(row.bestSeason) : e(metrics[metric])}</span></div><span class="rank-arrow">↗</span></a>`,
           )
           .join("")
       : empty(
