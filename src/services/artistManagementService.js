@@ -169,7 +169,7 @@ export async function saveArtist(
   tableFor(type);
   return database.transaction(
     "rw",
-    DATA_TABLES.map((t) => database.table(t)),
+    [...DATA_TABLES.map((t) => database.table(t)), database.restorePoints],
     async () => {
       const artist = await saveRecord(type, input, database);
       const owner = type === "idol" ? "idolId" : "groupId";

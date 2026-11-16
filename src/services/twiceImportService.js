@@ -19,7 +19,7 @@ const members = [
 const key = (value) => String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
 export async function importTwiceMembers(database = db) {
-  return database.transaction("rw", DATA_TABLES.map((table) => database.table(table)), async () => {
+  return database.transaction("rw", [...DATA_TABLES.map((table) => database.table(table)), database.restorePoints], async () => {
     let data = await loadSnapshot(database);
     let group = data.groups.find((row) => key(row.name) === "twice");
     if (!group) {
