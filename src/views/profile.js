@@ -42,13 +42,17 @@ export function renderProfile(type, id, data) {
     return { ...related, gender: related.gender || related.type, birthDate: related.birthDate, subtitle: [membership.role, membership.status].filter(Boolean).join(" · "), membership };
   });
   const sections = Object.entries(ENTITY_TABLES)
-    .filter(([t]) => !["idol", "group"].includes(t))
+    .filter(([t]) => !["idol", "group", "agency"].includes(t))
     .map(([t, table]) => {
       const rows = data[table].filter(
         (r) =>
           r.id !== id &&
           ((r.artistIds || []).includes(id) ||
             (r.groupIds || []).includes(id) ||
+            (r.actorIds || []).includes(id) ||
+            (r.directorIds || []).includes(id) ||
+            (r.writerIds || []).includes(id) ||
+            (r.agencyIds || []).includes(id) ||
             r.idolId === id ||
             r.albumId === id ||
             r.songId === id ||
@@ -65,6 +69,7 @@ export function renderProfile(type, id, data) {
                 performance: "Performances",
                 outfit: "Outfits",
                 documentary: "Documentaries",
+                drama: "Dramas and series",
               }[t],
             ) +
             '</h2></div><div class="entity-grid">' +
@@ -93,12 +98,19 @@ export function renderProfile(type, id, data) {
         .map((w) => [w.entityType + ":" + w.id, w]),
     ).values(),
   ];
-  const root = page(`<a class="text-link" href="#${type === "group" ? "groups" : "artists"}">← Back to the archive</a><header class="profile-header">${photo(entity)}<div><p class="eyebrow">${e(entity.subtitle)} · ${e(entity.status || "ARCHIVE")}</p><h1>${e(entity.name)}</h1><button class="button secondary compact" data-edit-profile>Edit ${e(FORMS[type]?.label || type)}</button><p class="lede">${e(entity.description || entity.roles || "")}</p><p class="small">${entity.debutDate ? "DEBUT · " + e(entity.debutDate) : entity.releaseDate ? "RELEASED · " + e(entity.releaseDate) : ""}</p>${safeUrl(entity.videoUrl) ? '<a class="text-link" target="_blank" rel="noopener noreferrer" href="' + e(safeUrl(entity.videoUrl)) + '">Watch video ↗</a>' : ""}</div></header>
+  const dramaFacts = type === "drama"
+    ? [entity.format, entity.status, entity.network, entity.genre, entity.seasons ? `${entity.seasons} seasons` : "", entity.episodes ? `${entity.episodes} episodes` : ""].filter(Boolean)
+    : [];
+  const back = type === "group" ? "groups" : type === "idol" ? (["actor", "actress"].includes(entity.personType) ? "actors" : "artists") : "admin";
+  const root = page(`<a class="text-link" href="#${back}">← Back to the archive</a><header class="profile-header">${photo(entity)}<div><p class="eyebrow">${e(entity.subtitle)} · ${e(entity.status || "ARCHIVE")}</p><h1>${e(entity.name)}</h1><button class="button secondary compact" data-edit-profile>Edit ${e(FORMS[type]?.label || type)}</button><p class="lede">${e(entity.description || entity.roles || "")}</p><p class="small">${entity.debutDate ? "DEBUT · " + e(entity.debutDate) : entity.releaseDate ? "RELEASED · " + e(entity.releaseDate) : ""}</p>${safeUrl(entity.website) ? '<a class="text-link" target="_blank" rel="noopener noreferrer" href="' + e(safeUrl(entity.website)) + '">Website ↗</a>' : safeUrl(entity.videoUrl) ? '<a class="text-link" target="_blank" rel="noopener noreferrer" href="' + e(safeUrl(entity.videoUrl)) + '">Watch video ↗</a>' : ""}</div></header>
  <div class="metrics">${metric(type === "group" ? stats.totalLegacyAwards : stats.directWins, type === "group" ? "Legacy awards" : "Total awards")}${metric(stats.directEntityWins, "Direct wins")}${metric(stats.directDaesangs, "Daesangs incl. songs & albums")}${type === "group" ? metric(stats.associatedMemberWins, "Associated wins") + metric(stats.associatedDaesangs, "Associated Daesangs") + metric(stats.legacyDaesangs, "Legacy Daesangs") : ""}${metric(stats.winRate === null ? "—" : stats.winRate + "%", "Win rate")}${metric(stats.seasonsWon, "Seasons won")}${metric(stats.bestSeason, "Best season")}</div>
- <p class="small">Win rate is distinct categories won in the best season divided by active categories. Best season uses ${type === "group" ? "Legacy" : "direct"} awards; tied seasons show the most recent year.</p>
+ ${dramaFacts.length ? '<p class="small">' + dramaFacts.map(e).join(" · ") + '</p>' : ""}
+ <p class="small">Win rate is matched nominations divided by distinct recorded nominations. Best season uses ${type === "group" ? "Legacy" : "direct"} awards; tied seasons show the most recent year.</p>
  <div class="section-heading"><h2>Award history.</h2></div>${history(stats.direct)}
  ${stats.directDaesangs ? '<div class="section-heading"><h2>Daesang history.</h2></div>' + history(stats.direct.filter((a) => index.categories.get(a.categoryId)?.tier === "daesang")) : ""}
  ${type === "group" ? '<div class="section-heading"><h2>Member awards.</h2></div>' + history(stats.associated) : ""}
+ ${type === "drama" ? '<div class="section-heading"><h2>Cast.</h2></div><div class="entity-grid">' + (entity.actorIds || []).map((actorId) => entityCard(resolveFromIndex("idol", actorId, index))).join("") + '</div><div class="section-heading"><h2>Directors.</h2></div><div class="entity-grid">' + (entity.directorIds || []).map((personId) => entityCard(resolveFromIndex("idol", personId, index))).join("") + '</div><div class="section-heading"><h2>Writers.</h2></div><div class="entity-grid">' + (entity.writerIds || []).map((personId) => entityCard(resolveFromIndex("idol", personId, index))).join("") + '</div><div class="section-heading"><h2>Production companies.</h2></div><div class="entity-grid">' + (entity.agencyIds || []).map((agencyId) => entityCard(resolveFromIndex("agency", agencyId, index))).join("") + '</div>' : ""}
+ ${type === "idol" && entity.agencyIds?.length ? '<div class="section-heading"><h2>Representation.</h2></div><div class="entity-grid">' + entity.agencyIds.map((agencyId) => entityCard(resolveFromIndex("agency", agencyId, index))).join("") + '</div>' : ""}
  ${relatedArtists.length ? '<div class="section-heading member-section-heading"><h2>' + (type === "group" ? "Members." : "Groups.") + '</h2>' + (type === "group" ? '<label>Order<select data-member-sort aria-label="Order group members"><option value="name">Name A–Z</option><option value="birth-oldest">Oldest first</option><option value="birth-youngest">Youngest first</option><option value="gender">Gender</option><option value="joined">Start date</option><option value="role">Role</option></select></label>' : "") + '</div><div class="entity-grid" data-related-grid></div><details class="panel"><summary>Membership timeline</summary>' + memberships.map((m) => "<p>" + e(resolveFromIndex(type === "group" ? "idol" : "group", type === "group" ? m.idolId : m.groupId, index).name) + " · " + e(m.startDate || "Start unknown") + " → " + e(m.endDate || (["former", "formerMember"].includes(m.status) ? "End unknown" : "Present")) + " · " + e(m.role || "Member") + "</p>").join("") + "</details>" : ""}
  ${sections}${collaborators.length ? '<div class="section-heading"><h2>Collaborations.</h2></div><div class="entity-grid">' + collaborators.map(entityCard).join("") + "</div>" : ""}`);
   root.querySelector("[data-edit-profile]").onclick = async () => {

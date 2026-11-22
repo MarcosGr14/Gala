@@ -66,8 +66,20 @@ export function entityStatistics(type, id, data, index) {
   const bestSeasonRows = best
     ? legacy.filter((a) => a.seasonId === best[0])
     : [];
-  const categoriesAvailable = data.categories.filter(
-    (category) => category.active !== false && !category.archivedAt,
+  const nominationMap = new Map();
+  for (const nomination of data.nominations || []) {
+    if (nomination.entityId !== id || (nomination.entityType && nomination.entityType !== type)) continue;
+    const key = `${nomination.seasonId}:${nomination.categoryId}:${nomination.slot || ""}`;
+    nominationMap.set(key, nomination);
+  }
+  const nominations = [...nominationMap.values()];
+  const matchedNominations = nominations.filter((nomination) =>
+    awards.some((award) =>
+      award.seasonId === nomination.seasonId &&
+      award.categoryId === nomination.categoryId &&
+      (award.slot || "") === (nomination.slot || "") &&
+      winnerRefs(award).some((winner) => winner.id === id && winner.type === type),
+    ),
   ).length;
   return {
     direct,
@@ -80,12 +92,9 @@ export function entityStatistics(type, id, data, index) {
     directDaesangs: daesangs(direct),
     associatedDaesangs: daesangs(associated),
     legacyDaesangs: daesangs(legacy),
-    winRate: categoriesAvailable && best
-      ? Math.round(
-          (new Set(bestSeasonRows.map((a) => a.categoryId)).size /
-            categoriesAvailable) *
-            100,
-        )
+    nominations: nominations.length,
+    winRate: nominations.length
+      ? Math.round((matchedNominations / nominations.length) * 100)
       : null,
     seasonsWon: counts.size,
     bestSeason: best ? index.seasons.get(best[0])?.year : null,

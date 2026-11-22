@@ -6,17 +6,17 @@ export function renderDirectory(type, data) {
   let saved = {};
   try { saved = JSON.parse(sessionStorage.getItem(stateKey) || "{}"); } catch {}
   const index = createIndex(data),
-    table = type === "group" ? "groups" : "idols";
+    table = type === "group" ? "groups" : type === "drama" ? "dramas" : "idols";
   const entities = data[table]
-    .filter((row) => !row.archivedAt && row.active !== false)
-    .map((row) => resolveFromIndex(type, row.id, index));
+    .filter((row) => !row.archivedAt && row.active !== false && (type !== "actors" || ["actor", "actress"].includes(row.personType)) && (type !== "idol" || !["actor", "actress"].includes(row.personType)))
+    .map((row) => resolveFromIndex(type === "actors" ? "idol" : type, row.id, index));
   const root = page(
     heading(
       "THE PEOPLE BEHIND THE MUSIC",
-      type === "group" ? "Groups." : "Artists.",
+      type === "group" ? "Groups." : type === "drama" ? "Dramas & series." : type === "actors" ? "Actors." : "Artists.",
       "Explore the names and stories that make this archive.",
     ) +
-      `<div class="toolbar directory-filters"><label class="search-label">Search the archive<input data-search type="search" placeholder="Find a name, group, or detail…" aria-label="Search ${type === "group" ? "groups" : "artists"}"></label><label>${type === "group" ? "Group type" : "Gender"}<select data-kind-filter><option value="">All</option>${type === "group" ? '<option value="bg">Boy group</option><option value="gg">Girl group</option><option value="mixed">Mixed group</option><option value="band">Band</option><option value="subunit">Subunit</option>' : '<option value="female">Female</option><option value="male">Male</option><option value="other">Other / unspecified</option>'}</select></label><label>Sort<select data-sort><option value="name">Name A–Z</option><option value="name-desc">Name Z–A</option><option value="gender">Gender, then name</option><option value="oldest">Oldest debut</option><option value="newest">Newest debut</option>${type === "group" ? '<option value="type">Group type</option>' : '<option value="birth-oldest">Oldest first</option><option value="birth-youngest">Youngest first</option>'}</select></label><span class="small" data-count></span></div><div class="entity-grid" data-results></div>`,
+      `<div class="toolbar directory-filters"><label class="search-label">Search the archive<input data-search type="search" placeholder="Find a name, group, or detail…" aria-label="Search ${type === "group" ? "groups" : type === "drama" ? "dramas" : type === "actors" ? "actors" : "artists"}"></label><label>${type === "group" ? "Group type" : type === "drama" ? "Format" : type === "actors" ? "Role" : "Gender"}<select data-kind-filter><option value="">All</option>${type === "group" ? '<option value="bg">Boy group</option><option value="gg">Girl group</option><option value="mixed">Mixed group</option><option value="band">Band</option><option value="subunit">Subunit</option>' : type === "drama" ? '<option value="drama">Drama</option><option value="series">Series</option><option value="film">Film</option><option value="variety">Variety</option><option value="web series">Web series</option>' : type === "actors" ? '<option value="actor">Actor</option><option value="actress">Actress</option>' : '<option value="female">Female</option><option value="male">Male</option><option value="other">Other / unspecified</option>'}</select></label><label>Sort<select data-sort><option value="name">Name A–Z</option><option value="name-desc">Name Z–A</option>${type === "group" ? '<option value="gender">Gender, then name</option><option value="oldest">Oldest debut</option><option value="newest">Newest debut</option><option value="type">Group type</option>' : type === "actors" || type === "idol" ? '<option value="birth-oldest">Oldest first</option><option value="birth-youngest">Youngest first</option>' : type === "drama" ? '<option value="oldest">Earliest release</option><option value="newest">Latest release</option>' : '<option value="gender">Gender</option><option value="oldest">Oldest debut</option><option value="newest">Newest debut</option>'}</select></label><span class="small" data-count></span></div><div class="entity-grid" data-results></div>`,
   );
   root.dataset.directoryType = type;
   root.querySelector("[data-search]").value = saved.query || "";
@@ -32,7 +32,7 @@ export function renderDirectory(type, data) {
     const rows = entities
       .filter((entity) => {
         const record = records.get(entity.id);
-        const filterValue = type === "group" ? record?.type : record?.gender || "other";
+        const filterValue = type === "group" ? record?.type : type === "drama" ? record?.format : type === "actors" ? record?.personType : record?.gender || "other";
         const searchable = [
           entity.name,
           entity.subtitle,
@@ -41,6 +41,11 @@ export function renderDirectory(type, data) {
           record?.description,
           record?.roles,
           record?.type,
+          record?.format,
+          record?.originalTitle,
+          record?.genre,
+          record?.network,
+          record?.personType,
           record?.gender,
           record?.birthDate,
           record?.debutDate,
@@ -55,8 +60,8 @@ export function renderDirectory(type, data) {
         if (["oldest", "newest", "birth-oldest", "birth-youngest"].includes(sort)) {
           const birth = sort.startsWith("birth-");
           const direction = sort.endsWith("youngest") || sort === "newest" ? -1 : 1;
-          const aDate = birth ? first?.birthDate : first?.debutDate;
-          const bDate = birth ? second?.birthDate : second?.debutDate;
+          const aDate = birth ? first?.birthDate : type === "drama" ? first?.releaseDate : first?.debutDate;
+          const bDate = birth ? second?.birthDate : type === "drama" ? second?.releaseDate : second?.debutDate;
           if (!aDate) return bDate ? 1 : a.name.localeCompare(b.name);
           if (!bDate) return -1;
           return aDate.localeCompare(bDate) * direction || a.name.localeCompare(b.name);
@@ -67,7 +72,7 @@ export function renderDirectory(type, data) {
     root.querySelector("[data-results]").innerHTML = rows.length
       ? rows.map((entity, position) => entityCard(entity, { eager: position < 6, priority: position === 0 })).join("")
       : empty(
-          type === "group" ? "No groups found." : "No artists found.",
+          type === "group" ? "No groups found." : type === "drama" ? "No dramas found." : type === "actors" ? "No actors found." : "No artists found.",
           "Adjust the filters or add an entry in Admin.",
         );
   }

@@ -1,4 +1,4 @@
-import { FAMILIES, WINNER_TYPES, STRUCTURES } from "./catalog.js";
+import { ENTITY_TABLES, WINNER_TYPES, STRUCTURES } from "./catalog.js";
 const text = (key, label, required = false) => ({ key, label, required });
 const select = (key, label, options) => ({ key, label, options });
 const date = (key, label) => ({ key, label, type: "date" });
@@ -15,7 +15,7 @@ const artists = () => ref("artistIds", "Artists", ["idol", "group"], true);
 const media = [url("image", "Image URL"), text("description", "Description")];
 export const FORMS = {
   idol: {
-    label: "Idol",
+    label: "Artist / Actor",
     table: "idols",
     fields: [
       text("stageName", "Stage name", true),
@@ -23,7 +23,7 @@ export const FORMS = {
       text("nationality", "Nationality"),
       date("birthDate", "Birth date"),
       select("gender", "Gender", ["", "female", "male", "other"]),
-      select("personType", "Person type", ["idol", "soloist", "actor", "actress", "virtualCharacter"]),
+      select("personType", "Person type", ["idol", "soloist", "actor", "actress", "director", "writer", "virtualCharacter"]),
       { key: "isSoloist", label: "Solo artist (exclude from incomplete profile checks)", type: "checkbox" },
       url("photo", "Photo URL"),
       range("photoPositionX", "Photo framing · horizontal"),
@@ -32,6 +32,7 @@ export const FORMS = {
       date("debutDate", "Debut"),
       select("status", "Status", ["active", "inactive", "retired"]),
       text("roles", "Roles"),
+      ref("agencyIds", "Agencies / representation", ["agency"], true),
       text("description", "Biography"),
     ],
   },
@@ -130,6 +131,29 @@ export const FORMS = {
       ...media,
     ],
   },
+  drama: {
+    label: "Drama / Series",
+    table: "dramas",
+    fields: [
+      text("title", "Title", true),
+      text("originalTitle", "Original title"),
+      select("format", "Format", ["drama", "series", "film", "variety", "web series", "other"]),
+      select("status", "Status", ["released", "ongoing", "upcoming", "cancelled"]),
+      date("releaseDate", "Release date"),
+      date("endDate", "End date"),
+      { key: "seasons", label: "Number of seasons", type: "number" },
+      { key: "episodes", label: "Number of episodes", type: "number" },
+      text("genre", "Genres"),
+      text("network", "Network / platform"),
+      ref("directorIds", "Directors", ["idol"], true),
+      ref("writerIds", "Writers", ["idol"], true),
+      ref("actorIds", "Cast", ["idol"], true),
+      ref("agencyIds", "Production companies", ["agency"], true),
+      url("image", "Poster URL"),
+      url("videoUrl", "Trailer URL"),
+      text("description", "Synopsis"),
+    ],
+  },
   membership: {
     label: "Membership",
     table: "memberships",
@@ -150,12 +174,23 @@ export const FORMS = {
       text("displayName", "Display name", true),
       text("description", "Description"),
       select("tier", "Tier", ["regular", "daesang"]),
-      select("family", "Family", FAMILIES),
+      text("family", "Family", true),
       select("winnerType", "Winner type", WINNER_TYPES),
       select("winnerStructure", "Winner structure", STRUCTURES),
       select("genderRestriction", "Gender restriction", ["", "male", "female"]),
       { key: "sortOrder", label: "Display order", type: "number" },
       text("userSlots", "User slots (comma separated)"),
+      select("winnerPersonType", "Eligible person type", ["", "idol", "soloist", "actor", "actress", "director", "writer"]),
+    ],
+  },
+  nomination: {
+    label: "Nomination",
+    table: "nominations",
+    fields: [
+      ref("seasonId", "Season", ["season"], false, true),
+      ref("categoryId", "Category", ["category"], false, true),
+      ref("entityId", "Nominee", Object.keys(ENTITY_TABLES), false, true),
+      text("slot", "Slot"),
     ],
   },
   season: {
@@ -166,6 +201,17 @@ export const FORMS = {
       text("title", "Title", true),
       text("description", "Description"),
       url("image", "Banner URL"),
+    ],
+  },
+  agency: {
+    label: "Agency / Company",
+    table: "agencies",
+    fields: [
+      text("name", "Name", true),
+      select("type", "Organization type", ["agency", "label", "company", "management", "other"]),
+      url("website", "Website URL"),
+      url("logo", "Logo URL"),
+      text("description", "Description"),
     ],
   },
 };

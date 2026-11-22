@@ -121,7 +121,7 @@ export async function openAwardForm(existing = null, onSaved = () => {}, options
     dynamic.append(hint);
     winners = autocomplete({
       label: "Winners",
-      items: pickerItems(types, data),
+      items: pickerItems(types, data).filter((item) => !category.winnerPersonType || item.entityType !== "idol" || data.idols.find((row) => row.id === item.id)?.personType === category.winnerPersonType),
       multiple: true,
       onChange: renderPreview,
     });
@@ -136,7 +136,7 @@ export async function openAwardForm(existing = null, onSaved = () => {}, options
             '<button class="text-link" type="button" data-type="' +
             t +
             '">+ Add ' +
-            e(t) +
+            e(category.winnerPersonType || t) +
             "</button>",
         )
         .join("");
@@ -145,8 +145,8 @@ export async function openAwardForm(existing = null, onSaved = () => {}, options
         (button.onclick = async () => {
           await openEntityForm(button.dataset.type, null, async () => {
             data = await loadSnapshot();
-            winners.setItems(pickerItems(types, data));
-          });
+            winners.setItems(pickerItems(types, data).filter((item) => !category.winnerPersonType || item.entityType !== "idol" || data.idols.find((row) => row.id === item.id)?.personType === category.winnerPersonType));
+          }, category.winnerPersonType ? { personType: category.winnerPersonType } : {});
         }),
     );
     dynamic.append(quick);

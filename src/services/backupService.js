@@ -6,7 +6,7 @@ import { validateRecord, auditEntry } from "./catalogService.js";
 import { validateAward } from "./awardValidation.js";
 import { generateId } from "../utils/helpers.js";
 // Backup format versions describe the JSON contract, independent of IndexedDB migrations.
-const BACKUP_SCHEMA_VERSION = 2;
+const BACKUP_SCHEMA_VERSION = 4;
 export async function createBackup(database = db) {
   return {
     schemaVersion: BACKUP_SCHEMA_VERSION,
@@ -38,13 +38,20 @@ export function prepareBackup(input, current = {}) {
     typeof input === "string" ? JSON.parse(input) : structuredClone(input);
   if (
     !source ||
-    ![1, 2].includes(source.schemaVersion) ||
+    ![1, 2, 3, 4].includes(source.schemaVersion) ||
     !Array.isArray(source.awardResults)
   )
     throw new Error("Unsupported or invalid backup.");
   const missing = DATA_TABLES.filter((t) => !Object.hasOwn(source, t));
-  if (source.schemaVersion === 2 && missing.length)
-    throw new Error("Incomplete backup: " + missing.join(", "));
+  const requiredMissing = source.schemaVersion === 2
+    ? missing.filter((table) => !["agencies", "dramas"].includes(table))
+    : source.schemaVersion === 3
+      ? missing.filter((table) => table !== "dramas")
+      : source.schemaVersion === 4
+        ? missing
+        : [];
+  if (requiredMissing.length)
+    throw new Error("Incomplete backup: " + requiredMissing.join(", "));
   const data = {};
   for (const table of DATA_TABLES) {
     const rows = source[table] ?? current[table] ?? [];
@@ -71,6 +78,12 @@ export function prepareBackup(input, current = {}) {
       category.winnerType = "idol";
     if (category.id === "cat_best_comeback_look" || category.name === "Best Comeback Look")
       category.winnerType = "idol";
+    if (category.winnerType === "idol") {
+      if (/actress/i.test(category.name)) category.winnerPersonType = "actress";
+      else if (/actor/i.test(category.name)) category.winnerPersonType = "actor";
+      else if (/director/i.test(category.name)) category.winnerPersonType = "director";
+      else if (/screenplay/i.test(category.name)) category.winnerPersonType = "writer";
+    }
     return category;
   });
   data.memberships = data.memberships.map((m) => ({

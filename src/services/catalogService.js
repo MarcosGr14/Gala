@@ -49,6 +49,8 @@ export function validateRecord(type, record, index, strict = true) {
       (!Number.isFinite(value) || value < 0 || value > 100)
     )
       throw new Error(field.label + " must be between 0 and 100.");
+    if (field.type === "number" && !Number.isFinite(value))
+      throw new Error(field.label + " must be a number.");
     if (field.type === "url" && !safeUrl(value))
       throw new Error(field.label + " must be an http(s) URL or local path.");
     if (
@@ -84,6 +86,10 @@ export function validateRecord(type, record, index, strict = true) {
     if (strict && record.status === "former" && !record.endDate)
       throw new Error("Former memberships require an end date.");
   }
+  if (type === "drama" && record.releaseDate && record.endDate && record.endDate < record.releaseDate)
+    throw new Error("End date must be on or after the release date.");
+  if (type === "drama" && ["seasons", "episodes"].some((key) => record[key] != null && (!Number.isInteger(record[key]) || record[key] < 1)))
+    throw new Error("Season and episode counts must be positive whole numbers.");
   if (type === "category") {
     if (!Number.isFinite(Number(record.sortOrder || 0)))
       throw new Error("Display order must be a number.");
@@ -113,6 +119,8 @@ export function validateRecord(type, record, index, strict = true) {
       (expected !== "mixedEntity" && expected !== record.entityType)
     )
       throw new Error("Nominee type does not match the category.");
+    if (category.winnerPersonType && record.entityType === "idol" && index.idols.get(record.entityId)?.personType !== category.winnerPersonType)
+      throw new Error(`Choose a ${category.winnerPersonType} for this category.`);
     const slots =
       category.winnerStructure === "maleFemale"
         ? ["male", "female"]
@@ -146,11 +154,15 @@ export async function saveRecord(type, input, database = db) {
       };
       if (type === "category") record = categoryDefaults(record);
       validateRecord(type, record, index);
-      const categoryRulesChanged = type === "category" && before &&
-        ["winnerType", "winnerStructure", "genderRestriction", "userSlots"].some(
+      const categoryRulesChanged = type === "category" && before && (
+        ["winnerType", "winnerStructure", "winnerPersonType", "genderRestriction"].some(
           (key) => JSON.stringify(record[key]) !== JSON.stringify(before[key]),
-        );
+        ) || ((record.winnerStructure === "userGenderSlots" || before.winnerStructure === "userGenderSlots") &&
+          JSON.stringify(record.userSlots || []) !== JSON.stringify(before.userSlots || []))
+      );
       if (categoryRulesChanged) {
+        if (data.awardResults.some((award) => award.categoryId === record.id))
+          throw new Error("Categories with award history cannot change winner rules. Create a new category instead.");
         const restorePoint = {
           id: generateId("restore"),
           createdAt: new Date().toISOString(),

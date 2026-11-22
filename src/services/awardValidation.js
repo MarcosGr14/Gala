@@ -17,6 +17,8 @@ export function validateAward(award, category, index) {
     }));
   if (!Array.isArray(refs) || !refs.length)
     throw new Error("Choose at least one winner.");
+  if (category.winnerStructure === "single" && refs.length !== 1)
+    throw new Error("Choose exactly one winner.");
   if (new Set(refs.map((r) => r.type + ":" + r.id)).size !== refs.length)
     throw new Error("A winner cannot appear twice in the same result.");
   if (category.winnerStructure === "pair" && refs.length !== 2)
@@ -54,10 +56,13 @@ export function validateAward(award, category, index) {
     if (requiredType !== "mixedEntity" && ref.type !== requiredType)
       throw new Error("Winner type does not match the category.");
     const row = index[ENTITY_TABLES[ref.type]].get(ref.id);
+    if (category.winnerPersonType && ref.type === "idol" && row.personType !== category.winnerPersonType)
+      throw new Error(`Choose a ${category.winnerPersonType} for this category.`);
     const rowGender =
       row.gender ||
+      (row.personType === "actor" ? "male" : row.personType === "actress" ? "female" : "") ||
       (row.type === "bg" ? "male" : row.type === "gg" ? "female" : "");
-    if (gender && rowGender !== gender)
+    if (gender && ref.type === "idol" && rowGender !== gender)
       throw new Error(
         "Set the matching gender on the selected artist before awarding this category.",
       );

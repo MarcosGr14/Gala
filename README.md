@@ -36,6 +36,7 @@ Keep using the same browser and URL (including hostname and port) to access your
 - Gala has a year selector and a keyboard-accessible presentation (left / right arrows, Escape to exit).
 - Admin provides focused creation forms and a searchable collection editor. Archive/unarchive preserves IDs, relations and award history.
 - Register Award searches categories and winners. Create missing winners inside the dialog without losing the current season/category or selected winners.
+- Actors and actresses use artist profiles with acting credits, agency representation, and dedicated award eligibility. Dramas, series and films have separate records with cast, production companies and release details.
 - Add photos through the image URL fields. Missing or unavailable images receive a monogram, not a broken image.
 - Category rules can be configured before use. Structural rule changes on categories with results require a new category, preserving existing history.
 
@@ -59,7 +60,7 @@ Keep using the same browser and URL (including hostname and port) to access your
 
 The database name remains `KPopGalaDatabase`.
 
-Schema v2 preserves the original tables/IDs, adds documentaries and local restore points, adds a compound award lookup index, normalizes legacy membership status labels, and fills missing category metadata. It adds missing default categories without overwriting existing names or IDs.
+Schema v7 preserves the original tables/IDs, adds documentaries, agencies and drama/series records, local restore points, a compound award lookup index, and category defaults for acting and screen awards. Existing category names, IDs and award history are preserved.
 
 Backups include all archive tables and audit history, plus schema/app versions and a timestamp. Recovery points are local operational history, kept separately to avoid recursively embedding backups. Download a recovery point from Admin to retain it outside the browser.
 

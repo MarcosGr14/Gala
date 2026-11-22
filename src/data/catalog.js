@@ -7,6 +7,8 @@ export const ENTITY_TABLES = {
   performance: "performances",
   outfit: "outfits",
   documentary: "documentaries",
+  agency: "agencies",
+  drama: "dramas",
 };
 export const DATA_TABLES = [
   "seasons",
@@ -30,6 +32,9 @@ export const FAMILIES = [
   "ROOKIE",
   "ENTERTAINMENT",
   "SPECIAL",
+  "DRAMA",
+  "ACTING",
+  "SOUNDTRACK",
 ];
 export const STRUCTURES = [
   "single",

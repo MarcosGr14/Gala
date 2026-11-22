@@ -54,6 +54,15 @@ const specs = [
   ["Fashion Icon", "idol", "FASHION"],
   ["Musical Icon Idol", "idol", "MUSIC"],
   ["Influencer of the Year", "idol", "ENTERTAINMENT"],
+  ["Drama of the Year", "drama", "DRAMA", "cat_drama_of_the_year"],
+  ["Series of the Year", "drama", "DRAMA", "cat_series_of_the_year"],
+  ["Best Actor", "idol", "ACTING", "cat_best_actor"],
+  ["Best Actress", "idol", "ACTING", "cat_best_actress"],
+  ["Best Supporting Actor", "idol", "ACTING", "cat_best_supporting_actor"],
+  ["Best Supporting Actress", "idol", "ACTING", "cat_best_supporting_actress"],
+  ["Best Drama OST", "song", "SOUNDTRACK", "cat_best_drama_ost"],
+  ["Best Drama Director", "idol", "ACTING", "cat_best_drama_director"],
+  ["Best Drama Screenplay", "idol", "ACTING", "cat_best_drama_screenplay"],
 ];
 export const initialCategories = specs.map(
   ([name, winnerType, family, id, winnerStructure = "single"], i) =>
@@ -65,6 +74,7 @@ export const initialCategories = specs.map(
         winnerType,
         family,
         winnerStructure,
+        ...(/actress/i.test(name) ? { winnerPersonType: "actress" } : /actor/i.test(name) ? { winnerPersonType: "actor" } : /director/i.test(name) ? { winnerPersonType: "director" } : /screenplay/i.test(name) ? { winnerPersonType: "writer" } : {}),
         tier: family === "DAESANG" ? "daesang" : "regular",
         genderRestriction: /female|girl|actress/i.test(name)
           ? "female"
@@ -87,7 +97,7 @@ export const initialSeasons = [2024, 2025, 2026].map((year) => ({
 }));
 const archiveTables = [
   "seasons", "categories", "idols", "groups", "songs", "albums",
-  "musicVideos", "performances", "outfits", "documentaries",
+  "musicVideos", "performances", "outfits", "documentaries", "agencies", "dramas",
   "memberships", "awardResults", "nominations", "auditLog",
 ];
 
@@ -110,7 +120,13 @@ async function seedPublishedArchive(db) {
 }
 
 export async function seedDatabase(db) {
-  if (await seedPublishedArchive(db)) return;
+  if (await seedPublishedArchive(db)) {
+    const existing = await db.categories.toArray();
+    const ids = new Set(existing.map((category) => category.id));
+    const names = new Set(existing.map((category) => category.name.toLocaleLowerCase()));
+    await db.categories.bulkAdd(initialCategories.filter((category) => !ids.has(category.id) && !names.has(category.name.toLocaleLowerCase())));
+    return;
+  }
   if (!(await db.categories.count()))
     await db.categories.bulkAdd(initialCategories);
   if (!(await db.seasons.count())) await db.seasons.bulkAdd(initialSeasons);

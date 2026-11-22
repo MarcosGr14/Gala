@@ -45,8 +45,8 @@ export function resolveFromIndex(type, id, index) {
     ...row,
     entityType: type,
     name: row.stageName || row.name || row.title || row.eventName || "Untitled",
-    image: row.photo || row.coverImage || row.thumbnail || row.image || "",
-    subtitle: artists.join(" · ") || row.realName || row.type || type,
+    image: row.photo || row.logo || row.coverImage || row.thumbnail || row.image || "",
+    subtitle: artists.join(" · ") || ({ actor: "Actor", actress: "Actress" }[row.personType]) || row.realName || row.format || row.type || type,
   };
 }
 export async function resolveEntity(type, id) {

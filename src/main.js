@@ -21,6 +21,8 @@ app.innerHTML =
     ["gala", "Gala"],
     ["artists", "Artists"],
     ["groups", "Groups"],
+    ["actors", "Actors"],
+    ["dramas", "Dramas"],
     ["categories", "Categories"],
     ["records", "Records"],
     ["admin", "Admin"],
@@ -48,8 +50,8 @@ async function navigate() {
     if (current !== request) return;
     let view;
     if (route === "home") view = renderHome(data);
-    else if (route === "artists" || route === "groups")
-      view = renderDirectory(route === "groups" ? "group" : "idol", data);
+    else if (["artists", "groups", "actors", "dramas"].includes(route))
+      view = renderDirectory(({ groups: "group", actors: "actors", dramas: "drama" })[route] || "idol", data);
     else if (route === "categories") view = renderCategories(data);
     else if (route === "category") view = renderCategoryProfile(part, data);
     else if (route === "gala") view = renderGala(data, part);

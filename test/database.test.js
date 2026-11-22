@@ -23,6 +23,51 @@ async function artist() {
   return saveRecord("idol", { stageName: "A", gender: "male" }, database);
 }
 describe("Database writes", () => {
+  it("records dramas, linked cast and production teams, and eligible acting awards", async () => {
+    const agency = await saveRecord("agency", { name: "Studio Example", type: "company" }, database);
+    const actor = await saveRecord("idol", {
+      stageName: "Actor Example",
+      personType: "actor",
+      gender: "male",
+    }, database);
+    const director = await saveRecord("idol", {
+      stageName: "Director Example",
+      personType: "director",
+    }, database);
+    const writer = await saveRecord("idol", {
+      stageName: "Writer Example",
+      personType: "writer",
+    }, database);
+    const drama = await saveRecord("drama", {
+      title: "Example Series",
+      format: "series",
+      status: "released",
+      releaseDate: "2025-01-01",
+      endDate: "2025-02-01",
+      seasons: 1,
+      episodes: 8,
+      actorIds: [actor.id],
+      directorIds: [director.id],
+      writerIds: [writer.id],
+      agencyIds: [agency.id],
+    }, database);
+    expect(drama).toMatchObject({
+      actorIds: [actor.id],
+      directorIds: [director.id],
+      writerIds: [writer.id],
+      agencyIds: [agency.id],
+    });
+    await saveAward({
+      seasonId: "season_2025",
+      categoryId: "cat_best_actor",
+      winners: [{ id: actor.id, type: "idol" }],
+    }, database);
+    await expect(saveAward({
+      seasonId: "season_2025",
+      categoryId: "cat_best_actor",
+      winners: [{ id: writer.id, type: "idol" }],
+    }, database)).rejects.toThrow(/actor/);
+  });
   it("seeds all eight Daesangs and complete category metadata", async () => {
     const categories = await database.categories.toArray();
     expect(categories.filter((c) => c.tier === "daesang")).toHaveLength(8);
@@ -110,7 +155,7 @@ describe("Backup and restoration", () => {
   it("exports every data table including media and documents", async () => {
     const backup = await createBackup(database);
     expect(DATA_TABLES.every((t) => Array.isArray(backup[t]))).toBe(true);
-    expect(backup.schemaVersion).toBe(2);
+    expect(backup.schemaVersion).toBe(4);
   });
   it("round trips media and keeps an exact recovery point", async () => {
     const idol = await artist();

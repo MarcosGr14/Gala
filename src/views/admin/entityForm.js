@@ -12,7 +12,7 @@ import {
 } from "../../services/entityService.js";
 import { saveRecord } from "../../services/catalogService.js";
 import { autocomplete } from "../../components/autocomplete.js";
-import { modal, toast, confirmModal } from "../../components/ui.js";
+import { modal, toast } from "../../components/ui.js";
 import { escapeHtml as e } from "../../utils/helpers.js";
 export function pickerItems(types, data, includeArchived = false) {
   const index = createIndex(data);
@@ -33,7 +33,7 @@ export function pickerItems(types, data, includeArchived = false) {
       ),
   );
 }
-export async function openEntityForm(type, record = null, onSaved = () => {}) {
+export async function openEntityForm(type, record = null, onSaved = () => {}, defaults = {}) {
   const definition = FORMS[type],
     data = await loadSnapshot();
   const form = document.createElement("form");
@@ -73,9 +73,22 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
           ? "textarea"
           : "input",
     );
+    if (type === "category" && field.key === "family") {
+      const list = document.createElement("datalist");
+      list.id = "category-families";
+      [...new Set(data.categories.map((category) => category.family).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b))
+        .forEach((family) => list.append(new Option(family, family)));
+      input.setAttribute("list", list.id);
+      form.append(list);
+    }
     input.id = id;
     input.name = field.key;
     input.required = !!field.required;
+    if (field.type === "number") {
+      input.step = 1;
+      if (type === "drama" && ["seasons", "episodes"].includes(field.key)) input.min = 1;
+    }
     if (field.type === "range") {
       input.min = 0;
       input.max = 100;
@@ -105,7 +118,10 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
         )
         .join("");
     } else if (input.tagName === "INPUT") input.type = field.type || "text";
-    let value = field.key === "photoFit" ? "cover" : record?.[field.key];
+    let value = field.key === "photoFit" ? "cover" : record?.[field.key] ?? defaults[field.key];
+    const personType = defaults.personType || record?.personType;
+    if (field.key === "gender" && !value && personType)
+      value = personType === "actor" ? "male" : personType === "actress" ? "female" : "";
     if (field.key === "userSlots")
       value = Array.isArray(value) ? value.join(", ") : "user1, user2";
     if (value !== undefined && value !== null) {
@@ -121,6 +137,13 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
     label.append(input);
     form.append(label);
   }
+  const personTypeInput = form.elements.namedItem("personType");
+  personTypeInput?.addEventListener("change", () => {
+    const gender = form.elements.namedItem("gender");
+    if (gender?.value) return;
+    if (personTypeInput.value === "actor") gender.value = "male";
+    if (personTypeInput.value === "actress") gender.value = "female";
+  });
   function updatePhotoPreview() {
     const preview = form.querySelector("[data-photo-preview]");
     if (!preview) return;
@@ -163,21 +186,6 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
     const button = actions.querySelector("button");
     button.disabled = true;
     try {
-      if (type === "category" && record) {
-        const hasResults = data.awardResults.some((award) => award.categoryId === record.id);
-        const changesRules = ["winnerType", "winnerStructure", "genderRestriction", "userSlots"].some((key) => {
-          const element = form.elements.namedItem(key);
-          if (!element) return false;
-          const next = key === "userSlots" ? element.value.split(",").map((value) => value.trim()).filter(Boolean) : element.value;
-          const previous = key === "userSlots" && !Array.isArray(record[key]) ? [] : record[key];
-          return JSON.stringify(next) !== JSON.stringify(previous ?? (key === "userSlots" ? [] : ""));
-        });
-        if (hasResults && changesRules && !(await confirmModal(
-          "Change rules for a category with winners?",
-          "This affects which kinds of winners are valid for future results. Existing award history stays as recorded, and a recovery point will be saved automatically before the change.",
-          "Save category rules",
-        ))) return;
-      }
       const input = record ? { ...record } : {};
       for (const field of definition.fields) {
         if (field.types) {
@@ -193,7 +201,7 @@ export async function openEntityForm(type, record = null, onSaved = () => {}) {
             field.type === "checkbox"
               ? element.checked
               : ["number", "range"].includes(field.type)
-                ? Number(element.value)
+                ? element.value === "" && field.type === "number" ? null : Number(element.value)
                 : element.value.trim();
           if (field.key === "userSlots")
             input[field.key] = input[field.key]
