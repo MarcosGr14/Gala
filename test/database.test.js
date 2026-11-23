@@ -152,6 +152,22 @@ describe("Database writes", () => {
   });
 });
 describe("Backup and restoration", () => {
+  it("preserves historic acting awards when profiles predate person-type eligibility", async () => {
+    const actress = await saveRecord("idol", {
+      stageName: "Historic Actress",
+      personType: "actress",
+      gender: "female",
+    }, database);
+    await saveAward({
+      seasonId: "season_2024",
+      categoryId: "cat_idol_actress",
+      winners: [{ id: actress.id, type: "idol" }],
+    }, database);
+    const backup = await createBackup(database);
+    const historicProfile = backup.idols.find((row) => row.id === actress.id);
+    delete historicProfile.personType;
+    expect(() => prepareBackup(backup)).not.toThrow();
+  });
   it("exports every data table including media and documents", async () => {
     const backup = await createBackup(database);
     expect(DATA_TABLES.every((t) => Array.isArray(backup[t]))).toBe(true);

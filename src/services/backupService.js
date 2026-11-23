@@ -113,7 +113,14 @@ export function prepareBackup(input, current = {}) {
       throw new Error("An award references a missing category or season.");
     // Older records can predate gender metadata. Verify relationships without rewriting history.
     const legacyIndex = { ...index };
-    const cleanCategory = { ...category, active: true, genderRestriction: "" };
+    const cleanCategory = {
+      ...category,
+      active: true,
+      genderRestriction: "",
+      // New person-type rules constrain future awards. Older archives may
+      // record actor/actress winners before profiles had personType metadata.
+      winnerPersonType: "",
+    };
     if (["maleFemale", "userGenderSlots"].includes(category.winnerStructure)) {
       if (!row.slot) throw new Error("A slotted award is missing its slot.");
     }
@@ -129,7 +136,11 @@ export function prepareBackup(input, current = {}) {
         gender: row.slot?.split("_").at(-1) || index[table].get(ref.id).gender,
       });
     }
-    validateAward(row, cleanCategory, legacyIndex);
+    const references = winnerRefs(row);
+    const legacyStructure = cleanCategory.winnerStructure === "single" && references.length > 1
+      ? "multiple"
+      : cleanCategory.winnerStructure;
+    validateAward(row, { ...cleanCategory, winnerStructure: legacyStructure }, legacyIndex);
     if (
       row.winners &&
       JSON.stringify(row.winnerIds) !==
