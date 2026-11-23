@@ -116,6 +116,8 @@ export function validateRecord(type, record, index, strict = true) {
       category?.winnerType === "pair" ? "idol" : category?.winnerType;
     if (
       !category ||
+      category.active === false ||
+      category.archivedAt ||
       (expected !== "mixedEntity" && expected !== record.entityType)
     )
       throw new Error("Nominee type does not match the category.");

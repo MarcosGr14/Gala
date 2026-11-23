@@ -11,6 +11,7 @@ import { openEntityForm } from "./admin/entityForm.js";
 import { openAwardForm } from "./admin/awardForm.js";
 import { openBackupPanel } from "./admin/backupPanel.js";
 import { escapeHtml as e } from "../utils/helpers.js";
+import { isArchived } from "../services/artistManagementService.js";
 import { importTwiceMembers } from "../services/twiceImportService.js";
 import {
   countIncompleteProfiles,
@@ -131,9 +132,10 @@ export function renderAdmin(initialData) {
         );
       return;
     }
+    const showArchived = root.querySelector("[data-show-archived]").checked;
     const rows = (
       active === "awards" ? data.awardResults.filter((row) => row.seasonId === awardSeasonId) : data[FORMS[active].table]
-    ).filter((row) => JSON.stringify(row).toLowerCase().includes(query) || labelOf(row).toLowerCase().includes(query));
+    ).filter((row) => (showArchived || !isArchived(row)) && (JSON.stringify(row).toLowerCase().includes(query) || labelOf(row).toLowerCase().includes(query)));
     const sort = root.querySelector("[data-admin-sort]").value;
     rows.sort((a, b) => {
       if (sort === "gender") return String(a.gender || a.type || "").localeCompare(String(b.gender || b.type || "")) || labelOf(a).localeCompare(labelOf(b));
@@ -210,7 +212,7 @@ export function renderAdmin(initialData) {
     const results = data.awardResults.filter((r) => r.seasonId === season.id);
     const slotsFor = (c) => c.winnerStructure === "maleFemale" ? ["male", "female"] : c.winnerStructure === "userGenderSlots" ? (c.userSlots || ["user1", "user2"]).flatMap((u) => [u + "_male", u + "_female"]) : [""];
     const index = createIndex(data);
-    const rows = data.categories.filter((c) => (c.displayName + " " + c.family).toLowerCase().includes(query)).sort((a,b) => (a.sortOrder ?? 999) - (b.sortOrder ?? 999) || a.displayName.localeCompare(b.displayName)).map((c) => {
+    const rows = data.categories.filter((c) => !isArchived(c) && (c.displayName + " " + c.family).toLowerCase().includes(query)).sort((a,b) => (a.sortOrder ?? 999) - (b.sortOrder ?? 999) || a.displayName.localeCompare(b.displayName)).map((c) => {
       const slots = slotsFor(c), records = slots.map((slot) => results.find((r) => r.categoryId === c.id && (r.slot || "") === slot));
       const filled = records.filter(Boolean).length, status = filled === slots.length ? "complete" : filled ? "partial" : "missing";
       const names = records.map((record, i) => record ? (slots[i] ? slots[i] + ": " : "") + populateAward(record, index).winners.map((w) => w.name).join(" & ") : (slots[i] ? slots[i] + ": " : "") + "missing").join(" · ");
@@ -218,7 +220,7 @@ export function renderAdmin(initialData) {
       return '<article class="coverage-card ' + status + '"><div><div class="coverage-title"><a class="coverage-link" href="' + categoryHref(c) + '"><strong>' + e(c.displayName) + '</strong></a><span class="coverage-badge ' + status + '">' + (status === "complete" ? "Complete" : status === "partial" ? "Partial · " + filled + "/" + slots.length : "Pending") + '</span></div><span class="small">' + e(c.family || "Category") + '</span><p class="coverage-winners">' + e(names) + '</p></div><div class="actions">' + buttons + '</div></article>';
     });
     const counts = {complete: 0, partial: 0, missing: 0};
-    data.categories.forEach((c) => { const slots = slotsFor(c), n = slots.filter((slot) => results.some((r) => r.categoryId === c.id && (r.slot || "") === slot)).length; counts[n === slots.length ? "complete" : n ? "partial" : "missing"]++; });
+    data.categories.filter((c) => !isArchived(c)).forEach((c) => { const slots = slotsFor(c), n = slots.filter((slot) => results.some((r) => r.categoryId === c.id && (r.slot || "") === slot)).length; counts[n === slots.length ? "complete" : n ? "partial" : "missing"]++; });
     container.innerHTML = '<section class="award-coverage"><div class="coverage-header"><div><p class="eyebrow">SEASON CHECKLIST</p><h2>Winner coverage</h2><p class="small">Track filled and pending categories.</p></div><label>Season<select data-coverage-season>' + seasons.map((s) => '<option value="' + e(s.id) + '" ' + (s.id === season.id ? "selected" : "") + '>' + e(s.year + " · " + s.title) + '</option>').join("") + '</select></label></div><div class="coverage-summary"><span><b>' + counts.complete + '</b> complete</span><span><b>' + counts.partial + '</b> partial</span><span><b>' + counts.missing + '</b> pending</span></div><label>Show<select data-coverage-filter><option value="all">All categories</option><option value="missing">Pending</option><option value="partial">Partial</option><option value="complete">Complete</option></select></label><div class="coverage-list">' + rows.filter((row) => awardStatusFilter === "all" || row.includes("coverage-card " + awardStatusFilter)).join("") + '</div></section><div class="section-heading"><h2>Saved results</h2><span class="small">' + results.length + ' result(s) this season</span></div>';
     const seasonSelect = container.querySelector("[data-coverage-season]"); seasonSelect.onchange = () => { awardSeasonId = seasonSelect.value; renderList(); };
     const filter = container.querySelector("[data-coverage-filter]"); filter.value = awardStatusFilter; filter.onchange = () => { awardStatusFilter = filter.value; renderList(); };

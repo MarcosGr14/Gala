@@ -4,6 +4,7 @@ import { createIndex } from "../src/services/entityService.js";
 import { validateAward } from "../src/services/awardValidation.js";
 import { validateRecord } from "../src/services/catalogService.js";
 import { escapeHtml, safeUrl } from "../src/utils/helpers.js";
+import { pickerItems } from "../src/views/admin/entityForm.js";
 const result = (winners, slot = "") => ({
   seasonId: "s24",
   categoryId: "c",
@@ -58,6 +59,20 @@ describe("Winner structures", () => {
         createIndex(data),
       ),
     ).toHaveLength(2);
+  });
+  it("hides archived categories and rejects new awards or nominations for them", () => {
+    const data = fixture();
+    data.categories[0].archivedAt = "2026-11-22T00:00:00.000Z";
+    data.categories[0].active = false;
+    const index = createIndex(data);
+    expect(pickerItems(["category"], data).some((item) => item.id === "c")).toBe(false);
+    expect(() => validateAward(result([a, b]), data.categories[0], index)).toThrow(/active category/);
+    expect(() => validateRecord("nomination", {
+      seasonId: "s24",
+      categoryId: "c",
+      entityId: "a",
+      entityType: "idol",
+    }, index)).toThrow(/category/i);
   });
   it("rejects incompatible types and missing IDs", () => {
     const data = fixture();

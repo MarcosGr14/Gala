@@ -2,7 +2,7 @@ import { ENTITY_TABLES, STRUCTURES, WINNER_TYPES } from "../data/catalog.js";
 export function validateAward(award, category, index) {
   if (!index.seasons.has(award.seasonId))
     throw new Error("Choose an existing season.");
-  if (!category || category.active === false)
+  if (!category || category.active === false || category.archivedAt)
     throw new Error("Choose an active category.");
   if (
     !STRUCTURES.includes(category.winnerStructure) ||
