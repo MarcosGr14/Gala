@@ -325,9 +325,28 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   gap: 24px;
   color: var(--text-secondary);
   font-size: 0.68rem;
+}
+.tmdb-attribution {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  max-width: 280px;
+  color: var(--text-secondary);
+  text-align: right;
+  font-size: 0.66rem;
+  line-height: 1.35;
+}
+.tmdb-attribution strong {
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+.tmdb-attribution:hover strong {
+  color: var(--color-primary);
 }
 .site-footer .brand {
   font-size: 11px;
@@ -503,6 +522,10 @@
   .site-footer {
     flex-direction: column;
     gap: 12px;
+    text-align: center;
+  }
+  .tmdb-attribution {
+    justify-items: center;
     text-align: center;
   }
   .page-heading {

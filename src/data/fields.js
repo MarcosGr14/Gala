@@ -61,6 +61,7 @@ export const FORMS = {
       date("releaseDate", "Release date"),
       url("coverImage", "Cover URL"),
       ref("musicVideoId", "Music video", ["musicVideo"]),
+      text("description", "Description"),
       { key: "isBside", label: "B-side", type: "checkbox" },
       { key: "isOST", label: "OST", type: "checkbox" },
     ],
@@ -92,6 +93,7 @@ export const FORMS = {
       url("thumbnail", "Thumbnail URL"),
       url("videoUrl", "Video URL"),
       text("concept", "Concept"),
+      text("description", "Description"),
     ],
   },
   performance: {

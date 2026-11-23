@@ -38,6 +38,7 @@ Keep using the same browser and URL (including hostname and port) to access your
 - Register Award searches categories and winners. Create missing winners inside the dialog without losing the current season/category or selected winners.
 - Actors and actresses use artist profiles with acting credits, agency representation, and dedicated award eligibility. Dramas, series and films have separate records with cast, production companies and release details.
 - Add photos through the image URL fields. Missing or unavailable images receive a monogram, not a broken image.
+- Song and music video forms can search YouTube or import a pasted video link. Drama and actor forms can search TMDB. Imported name, image and description can be reviewed before saving; API keys stay in the current browser session and are not included in backups.
 - Category rules can be configured before use. Structural rule changes on categories with results require a new category, preserving existing history.
 
 ## Counting rules

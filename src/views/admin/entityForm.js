@@ -14,6 +14,7 @@ import { saveRecord } from "../../services/catalogService.js";
 import { autocomplete } from "../../components/autocomplete.js";
 import { modal, toast } from "../../components/ui.js";
 import { escapeHtml as e } from "../../utils/helpers.js";
+import { openMetadataImporter } from "./metadataImporter.js";
 export function pickerItems(types, data, includeArchived = false) {
   const index = createIndex(data);
   return types.flatMap((type) =>
@@ -39,6 +40,29 @@ export async function openEntityForm(type, record = null, onSaved = () => {}, de
   const form = document.createElement("form");
   form.className = "entity-form";
   const pickers = new Map();
+  const importButton = document.createElement("button");
+  importButton.type = "button";
+  importButton.className = "button secondary metadata-import-button";
+  importButton.textContent = type === "drama" ? "Find title on TMDB" : ["song", "musicVideo"].includes(type) ? "Find on YouTube" : "Find actor on TMDB";
+  importButton.hidden = !["song", "musicVideo", "drama"].includes(type) && !(type === "idol" && ["actor", "actress"].includes(record?.personType || defaults.personType));
+  importButton.onclick = () => openMetadataImporter(type, (item) => {
+    const assignments = type === "song"
+      ? { title: item.title, coverImage: item.image, description: item.description }
+      : type === "musicVideo"
+        ? { title: item.title, thumbnail: item.image, videoUrl: item.videoUrl, description: item.description }
+        : type === "drama"
+          ? { title: item.title, image: item.image, description: item.description }
+          : { stageName: item.title, photo: item.image, description: item.description, gender: item.gender };
+    for (const [key, value] of Object.entries(assignments)) {
+      const field = form.elements.namedItem(key);
+      if (field && value !== undefined && value !== null) {
+        field.value = value;
+        field.dispatchEvent(new Event("input", { bubbles: true }));
+        field.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    }
+  }, form.elements.namedItem("format")?.value || "drama");
+  form.append(importButton);
   for (const field of definition.fields) {
     if (field.types) {
       const items = pickerItems(field.types, data),
@@ -138,6 +162,10 @@ export async function openEntityForm(type, record = null, onSaved = () => {}, de
     form.append(label);
   }
   const personTypeInput = form.elements.namedItem("personType");
+  personTypeInput?.addEventListener("change", () => {
+    importButton.hidden = !["actor", "actress"].includes(personTypeInput.value);
+    importButton.textContent = "Find actor on TMDB";
+  });
   personTypeInput?.addEventListener("change", () => {
     const gender = form.elements.namedItem("gender");
     if (gender?.value) return;

@@ -32,7 +32,7 @@ app.innerHTML =
         '<a href="#' + route + '" data-route="' + route + '">' + label + "</a>",
     )
     .join("") +
-  '</nav><span class="header-edition">EST. 2024</span></header><main id="view-container" tabindex="-1"></main><footer class="site-footer"><a class="brand" href="#home">✦ KPOP GALA</a><span>A living archive of unforgettable music.</span><span>2024 — PRESENT</span></footer><div id="toasts" aria-live="polite"></div>';
+  '</nav><span class="header-edition">EST. 2024</span></header><main id="view-container" tabindex="-1"></main><footer class="site-footer"><a class="brand" href="#home">✦ KPOP GALA</a><span>A living archive of unforgettable music.</span><span>2024 — PRESENT</span><a class="tmdb-attribution" href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer"><strong>TMDB</strong><small>This product uses the TMDB API but is not endorsed or certified by TMDB.</small></a></footer><div id="toasts" aria-live="polite"></div>';
 let request = 0;
 document.querySelector(".skip-link").addEventListener("click", (event) => {
   event.preventDefault();
