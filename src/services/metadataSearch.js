@@ -1,4 +1,5 @@
 const YOUTUBE_API = "https://www.googleapis.com/youtube/v3/search";
+const YOUTUBE_VIDEOS_API = "https://www.googleapis.com/youtube/v3/videos";
 const TMDB_API = "https://api.themoviedb.org/3";
 const TMDB_IMAGES = "https://image.tmdb.org/t/p/w500";
 
@@ -10,19 +11,52 @@ async function readJson(url) {
   return body;
 }
 
+function youtubeDetailsUrl(videoId, key) {
+  const url = new URL(YOUTUBE_VIDEOS_API);
+  url.search = new URLSearchParams({ part: "snippet", id: videoId, key: key.trim() });
+  return url;
+}
+
+export function cleanYouTubeSongTitle(title, artistNames = []) {
+  const quoted = title.match(/["“‘']([^"”’']{1,100})["”’']/);
+  let clean = quoted?.[1] || title;
+  clean = clean
+    .replace(/\s*[[(（][^\])）]*(?:official|music\s*video|performance\s*video|dance\s*practice|teaser|mv|m\/v)[^\])）]*[\])）]/gi, " ")
+    .replace(/\s*(?:official\s*)?(?:music\s*video|performance\s*video|dance\s*practice|mv|m\/v|official\s*audio|lyric\s*video)\s*$/i, "")
+    .replace(/\s*#(?:shorts|mv|musicvideo)\s*$/i, "")
+    .trim();
+  if (!quoted) {
+    const parts = clean.split(/\s+[|–—-]\s+/).map((part) => part.trim()).filter(Boolean);
+    if (parts.length > 1) {
+      const names = artistNames.map((name) => name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, "")).filter((name) => name.length > 1);
+      const first = parts[0].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+      if (names.some((name) => first === name || first.includes(name))) clean = parts.slice(1).join(" - ");
+    }
+  }
+  return clean.replace(/\s+/g, " ").trim();
+}
+
+export function youtubeVideoId(value) {
+  const match = String(value || "").match(/(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i);
+  return match?.[1] || "";
+}
+
 export async function searchYouTubeVideos(query, key) {
-  const pasted = query.match(/^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})(?:[?&#/].*)?$/i);
-  if (pasted) {
-    const videoUrl = `https://www.youtube.com/watch?v=${pasted[1]}`;
+  const videoId = youtubeVideoId(query);
+  if (videoId) {
+    const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
     const url = new URL("https://www.youtube.com/oembed");
     url.search = new URLSearchParams({ url: videoUrl, format: "json" });
     const body = await readJson(url);
+    const details = key?.trim() ? await readJson(youtubeDetailsUrl(videoId, key)) : null;
+    const snippet = details?.items?.[0]?.snippet;
     return [{
-      id: pasted[1],
-      title: body.title || "",
-      description: "",
-      image: body.thumbnail_url || "",
+      id: videoId,
+      title: snippet?.title || body.title || "",
+      description: snippet?.description || "",
+      image: snippet?.thumbnails?.high?.url || snippet?.thumbnails?.medium?.url || body.thumbnail_url || "",
       videoUrl,
+      channelTitle: snippet?.channelTitle || body.author_name || "",
       source: "YouTube",
     }];
   }
@@ -43,6 +77,7 @@ export async function searchYouTubeVideos(query, key) {
     description: item.snippet?.description || "",
     image: item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.medium?.url || item.snippet?.thumbnails?.default?.url || "",
     videoUrl: item.id?.videoId ? `https://www.youtube.com/watch?v=${encodeURIComponent(item.id.videoId)}` : "",
+    channelTitle: item.snippet?.channelTitle || "",
     source: "YouTube",
   })).filter((item) => item.id);
 }

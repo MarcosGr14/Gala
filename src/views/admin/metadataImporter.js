@@ -11,12 +11,12 @@ export function openMetadataImporter(type, onSelect, format = "drama") {
   const keyLabel = provider === "youtube" ? "YouTube API key" : "TMDB API key";
   const content = document.createElement("div");
   content.className = "metadata-importer";
-  content.innerHTML = `<p class="small">Choose a match to fill the form, then review it before saving.</p>
+  content.innerHTML = `<p class="small">Choose a result to fill the existing fields. YouTube searches use video results; check the uploader and edit the song title before saving.</p>
     <form class="metadata-search-form"><label>${isYoutube ? "YouTube API key (optional for a video link)" : keyLabel}<input name="apiKey" type="password" autocomplete="off" ${isYoutube ? "" : "required"}></label>
     <label>Search<input name="query" type="search" required placeholder="${isYoutube ? "Song, artist or YouTube link" : type === "drama" ? "Drama or series title" : "Actor name"}"></label>
     <button class="button" type="submit">Search</button><span class="small" data-import-status role="status"></span></form>
     <div class="metadata-results" data-import-results></div>
-    <p class="small metadata-key-note">The key is kept in this browser tab only. It is not added to backups.</p>`;
+    <p class="small metadata-key-note">For YouTube links, the API key adds the video description. The key stays in this browser tab and is not included in backups.</p>`;
   const form = content.querySelector("form");
   form.elements.apiKey.value = apiKey;
   const dialog = modal(provider === "youtube" ? "Find on YouTube" : "Find on TMDB", content);
@@ -56,7 +56,7 @@ export function openMetadataImporter(type, onSelect, format = "drama") {
         }
         const copy = document.createElement("span");
         copy.className = "metadata-result-copy";
-        copy.innerHTML = `<strong>${e(item.title)}</strong><span>${e(item.description || "No description")}</span><small>${e(item.source)}</small>`;
+        copy.innerHTML = `<strong>${e(item.title)}</strong><span>${e(item.description || "No description available")}</span><small>${e(item.channelTitle ? "Uploaded by " + item.channelTitle : item.source)}</small>`;
         button.append(copy);
         button.onclick = async () => {
           button.disabled = true;

@@ -168,6 +168,24 @@ input::placeholder {
 .metadata-import-button {
   justify-self: start;
 }
+.metadata-video-option,
+.metadata-video-option:not([hidden]) {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+.metadata-video-option[hidden] {
+  display: none;
+}
+.metadata-video-option input {
+  flex: 0 0 20px;
+}
 .metadata-importer {
   display: grid;
   gap: 14px;

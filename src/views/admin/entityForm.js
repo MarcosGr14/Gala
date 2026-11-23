@@ -15,6 +15,8 @@ import { autocomplete } from "../../components/autocomplete.js";
 import { modal, toast } from "../../components/ui.js";
 import { escapeHtml as e } from "../../utils/helpers.js";
 import { openMetadataImporter } from "./metadataImporter.js";
+import { cleanYouTubeSongTitle, youtubeVideoId } from "../../services/metadataSearch.js";
+import { saveSongWithMusicVideo } from "../../services/songImportService.js";
 export function pickerItems(types, data, includeArchived = false) {
   const index = createIndex(data);
   return types.flatMap((type) =>
@@ -40,14 +42,61 @@ export async function openEntityForm(type, record = null, onSaved = () => {}, de
   const form = document.createElement("form");
   form.className = "entity-form";
   const pickers = new Map();
+  let pendingYoutubeVideo = null;
+  const videoOption = document.createElement("label");
+  videoOption.className = "metadata-video-option";
+  videoOption.hidden = type !== "song";
+  videoOption.innerHTML = '<input type="checkbox" checked name="importYoutubeVideo"><span>Add the matching YouTube video and link it to this song</span>';
   const importButton = document.createElement("button");
   importButton.type = "button";
   importButton.className = "button secondary metadata-import-button";
-  importButton.textContent = type === "drama" ? "Find title on TMDB" : ["song", "musicVideo"].includes(type) ? "Find on YouTube" : "Find actor on TMDB";
+  importButton.textContent = type === "drama" ? "Find title on TMDB" : type === "song" ? "Find song and video on YouTube" : type === "musicVideo" ? "Find on YouTube" : "Find actor on TMDB";
   importButton.hidden = !["song", "musicVideo", "drama"].includes(type) && !(type === "idol" && ["actor", "actress"].includes(record?.personType || defaults.personType));
   importButton.onclick = () => openMetadataImporter(type, (item) => {
+    if (type === "song") {
+      const artistNames = [...data.idols.map((row) => row.stageName), ...data.groups.map((row) => row.name)].filter(Boolean);
+      const title = cleanYouTubeSongTitle(item.title, artistNames);
+      const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+      const channel = normalize(String(item.channelTitle || "").replace(/\s*[-|·]?\s*topic\s*$/i, "").replace(/\s+official\s*$/i, ""));
+      const catalogArtists = pickerItems(["idol", "group"], data);
+      let artists = catalogArtists.filter((artist) => normalize(artist.name) === channel);
+      if (!artists.length) {
+        const titlePrefix = normalize(String(item.title || "").split(/\s+[|–—-]\s+|["“‘']|\s*[\[(]/)[0]);
+        artists = catalogArtists.filter((artist) => {
+          const name = normalize(artist.name);
+          return name.length > 1 && titlePrefix.includes(name);
+        });
+      }
+      if (artists.length === 1) pickers.get("artistIds")?.setValue(artists);
+      const videoId = youtubeVideoId(item.videoUrl);
+      const existingVideo = data.musicVideos.find((row) => youtubeVideoId(row.videoUrl) === videoId);
+      pendingYoutubeVideo = {
+        ...(existingVideo || {}),
+        title: item.title,
+        thumbnail: item.image,
+        videoUrl: item.videoUrl,
+        description: item.description,
+        id: existingVideo?.id,
+      };
+      const linkedVideo = existingVideo && pickerItems(["musicVideo"], data, true).find((row) => row.id === existingVideo.id);
+      pickers.get("musicVideoId")?.setValue(linkedVideo ? [linkedVideo] : []);
+      videoOption.hidden = false;
+      const titleField = form.elements.namedItem("title");
+      if (titleField && title) titleField.value = title;
+      for (const [key, value] of Object.entries({ coverImage: item.image, description: item.description })) {
+        const field = form.elements.namedItem(key);
+        if (field && value !== undefined && value !== null) field.value = value;
+      }
+      return;
+    }
+    if (type === "musicVideo") {
+      const songTitle = cleanYouTubeSongTitle(item.title, [...data.idols.map((row) => row.stageName), ...data.groups.map((row) => row.name)]);
+      const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+      const matchingSongs = pickerItems(["song"], data).filter((song) => normalize(song.name) === normalize(songTitle));
+      if (matchingSongs.length === 1) pickers.get("songId")?.setValue(matchingSongs);
+    }
     const assignments = type === "song"
-      ? { title: item.title, coverImage: item.image, description: item.description }
+      ? { title: cleanYouTubeSongTitle(item.title), coverImage: item.image, description: item.description }
       : type === "musicVideo"
         ? { title: item.title, thumbnail: item.image, videoUrl: item.videoUrl, description: item.description }
         : type === "drama"
@@ -63,6 +112,7 @@ export async function openEntityForm(type, record = null, onSaved = () => {}, de
     }
   }, form.elements.namedItem("format")?.value || "drama");
   form.append(importButton);
+  if (type === "song") form.append(videoOption);
   for (const field of definition.fields) {
     if (field.types) {
       const items = pickerItems(field.types, data),
@@ -73,6 +123,12 @@ export async function openEntityForm(type, record = null, onSaved = () => {}, de
         label: field.label + (field.required ? " *" : ""),
         items,
         multiple: field.multiple,
+        onChange: (selected) => {
+          if (type === "song" && field.key === "musicVideoId" && pendingYoutubeVideo && selected[0]?.id !== pendingYoutubeVideo.id) {
+            pendingYoutubeVideo = null;
+            videoOption.hidden = true;
+          }
+        },
         value: pickerItems(field.types, data, true).filter(
           (i) =>
             ids.includes(i.id) &&
@@ -238,7 +294,9 @@ export async function openEntityForm(type, record = null, onSaved = () => {}, de
               .filter(Boolean);
         }
       }
-      const saved = ["idol", "group"].includes(type)
+      const saved = type === "song" && pendingYoutubeVideo && form.elements.namedItem("importYoutubeVideo")?.checked
+        ? await saveSongWithMusicVideo(input, pendingYoutubeVideo)
+        : ["idol", "group"].includes(type)
         ? await saveArtist(type, input, membershipEditor?.getChanges() || [], undefined, membershipEditor?.getDeletions() || [])
         : await saveRecord(type, input);
       dialog.close();
