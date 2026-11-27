@@ -43,6 +43,7 @@ export async function openEntityForm(type, record = null, onSaved = () => {}, de
   form.className = "entity-form";
   const pickers = new Map();
   let pendingYoutubeVideo = null;
+  let pendingSongAlbum = null;
   const videoOption = document.createElement("label");
   videoOption.className = "metadata-video-option";
   videoOption.hidden = type !== "song";
@@ -54,38 +55,59 @@ export async function openEntityForm(type, record = null, onSaved = () => {}, de
   importButton.hidden = !["song", "musicVideo", "drama"].includes(type) && !(type === "idol" && ["actor", "actress"].includes(record?.personType || defaults.personType));
   importButton.onclick = () => openMetadataImporter(type, (item) => {
     if (type === "song") {
+      const video = item.video || item;
+      pendingSongAlbum = null;
       const artistNames = [...data.idols.map((row) => row.stageName), ...data.groups.map((row) => row.name)].filter(Boolean);
-      const title = cleanYouTubeSongTitle(item.title, artistNames);
+      const title = item.songTitle || cleanYouTubeSongTitle(video.title, artistNames);
       const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
-      const channel = normalize(String(item.channelTitle || "").replace(/\s*[-|·]?\s*topic\s*$/i, "").replace(/\s+official\s*$/i, ""));
+      const channel = normalize(String(video.channelTitle || "").replace(/\s*[-|·]?\s*topic\s*$/i, "").replace(/\s+official\s*$/i, ""));
       const catalogArtists = pickerItems(["idol", "group"], data);
-      let artists = catalogArtists.filter((artist) => normalize(artist.name) === channel);
+      let artists = (item.artistNames || []).flatMap((name) => catalogArtists.filter((artist) => normalize(artist.name) === normalize(name)));
+      if (!artists.length) artists = catalogArtists.filter((artist) => normalize(artist.name) === channel);
       if (!artists.length) {
-        const titlePrefix = normalize(String(item.title || "").split(/\s+[|–—-]\s+|["“‘']|\s*[\[(]/)[0]);
+        const titlePrefix = normalize(String(video.title || "").split(/\s+[|–—-]\s+|["“‘']|\s*[\[(]/)[0]);
         artists = catalogArtists.filter((artist) => {
           const name = normalize(artist.name);
           return name.length > 1 && titlePrefix.includes(name);
         });
       }
       if (artists.length === 1) pickers.get("artistIds")?.setValue(artists);
-      const videoId = youtubeVideoId(item.videoUrl);
+      const videoId = youtubeVideoId(video.videoUrl);
       const existingVideo = data.musicVideos.find((row) => youtubeVideoId(row.videoUrl) === videoId);
       pendingYoutubeVideo = {
         ...(existingVideo || {}),
-        title: item.title,
-        thumbnail: item.image,
-        videoUrl: item.videoUrl,
-        description: item.description,
+        title: video.title,
+        thumbnail: video.image,
+        videoUrl: video.videoUrl,
+        description: video.description,
         id: existingVideo?.id,
       };
-      const linkedVideo = existingVideo && pickerItems(["musicVideo"], data, true).find((row) => row.id === existingVideo.id);
+      const canReuseVideo = existingVideo && (!existingVideo.songId || existingVideo.songId === record?.id);
+      const linkedVideo = canReuseVideo && pickerItems(["musicVideo"], data, true).find((row) => row.id === existingVideo.id);
       pickers.get("musicVideoId")?.setValue(linkedVideo ? [linkedVideo] : []);
       videoOption.hidden = false;
       const titleField = form.elements.namedItem("title");
       if (titleField && title) titleField.value = title;
-      for (const [key, value] of Object.entries({ coverImage: item.image, description: item.description })) {
+      for (const [key, value] of Object.entries({
+        coverImage: item.image || video.image,
+        description: item.description || video.description,
+        releaseDate: item.releaseDate,
+      })) {
         const field = form.elements.namedItem(key);
         if (field && value !== undefined && value !== null) field.value = value;
+      }
+      if (item.albumTitle) {
+        const album = pickerItems(["album"], data).filter((candidate) => normalize(candidate.name) === normalize(item.albumTitle));
+        if (album.length === 1) pickers.get("albumId")?.setValue(album);
+        else {
+          pickers.get("albumId")?.setValue([]);
+          pendingSongAlbum = {
+            title: item.albumTitle,
+            albumType: item.albumType,
+            releaseDate: item.releaseDate,
+            coverImage: item.image,
+          };
+        }
       }
       return;
     }
@@ -294,8 +316,11 @@ export async function openEntityForm(type, record = null, onSaved = () => {}, de
               .filter(Boolean);
         }
       }
-      const saved = type === "song" && pendingYoutubeVideo && form.elements.namedItem("importYoutubeVideo")?.checked
-        ? await saveSongWithMusicVideo(input, pendingYoutubeVideo)
+      const includeYoutubeVideo = form.elements.namedItem("importYoutubeVideo")?.checked;
+      if (type === "song" && pendingYoutubeVideo && !includeYoutubeVideo && input.musicVideoId === pendingYoutubeVideo.id)
+        input.musicVideoId = null;
+      const saved = type === "song" && (pendingYoutubeVideo || pendingSongAlbum)
+        ? await saveSongWithMusicVideo(input, includeYoutubeVideo ? pendingYoutubeVideo : null, undefined, pendingSongAlbum)
         : ["idol", "group"].includes(type)
         ? await saveArtist(type, input, membershipEditor?.getChanges() || [], undefined, membershipEditor?.getDeletions() || [])
         : await saveRecord(type, input);

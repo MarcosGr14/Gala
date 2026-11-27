@@ -11,12 +11,12 @@ export function openMetadataImporter(type, onSelect, format = "drama") {
   const keyLabel = provider === "youtube" ? "YouTube API key" : "TMDB API key";
   const content = document.createElement("div");
   content.className = "metadata-importer";
-  content.innerHTML = `<p class="small">Choose a result to fill the existing fields. YouTube searches use video results; check the uploader and edit the song title before saving.</p>
+  content.innerHTML = `<p class="small">Choose a result to fill the song title, artist, album, release date and cover when catalog data is available, while keeping its YouTube video attached. Missing albums are added to your catalog when you save. Check the match before saving.</p>
     <form class="metadata-search-form"><label>${isYoutube ? "YouTube API key (optional for a video link)" : keyLabel}<input name="apiKey" type="password" autocomplete="off" ${isYoutube ? "" : "required"}></label>
-    <label>Search<input name="query" type="search" required placeholder="${isYoutube ? "Song, artist or YouTube link" : type === "drama" ? "Drama or series title" : "Actor name"}"></label>
+    <label>Search<input name="query" type="search" required placeholder="${isYoutube ? "Song, artist, YouTube or YouTube Music link" : type === "drama" ? "Drama or series title" : "Actor name"}"></label>
     <button class="button" type="submit">Search</button><span class="small" data-import-status role="status"></span></form>
     <div class="metadata-results" data-import-results></div>
-    <p class="small metadata-key-note">For YouTube links, the API key adds the video description. The key stays in this browser tab and is not included in backups.</p>`;
+    <p class="small metadata-key-note">YouTube Music links use MusicBrainz for track and album details, and YouTube for the video. The optional YouTube API key can add its description. Keys stay in this browser tab and are not included in backups.</p>`;
   const form = content.querySelector("form");
   form.elements.apiKey.value = apiKey;
   const dialog = modal(provider === "youtube" ? "Find on YouTube" : "Find on TMDB", content);
@@ -47,6 +47,16 @@ export function openMetadataImporter(type, onSelect, format = "drama") {
           image.src = item.image;
           image.alt = "";
           image.loading = "lazy";
+          image.onerror = () => {
+            if (item.video?.image && image.src !== item.video.image) {
+              image.src = item.video.image;
+              return;
+            }
+            const placeholder = document.createElement("span");
+            placeholder.className = "metadata-result-placeholder";
+            placeholder.textContent = "No poster";
+            image.replaceWith(placeholder);
+          };
           button.append(image);
         } else {
           const placeholder = document.createElement("span");
@@ -56,7 +66,8 @@ export function openMetadataImporter(type, onSelect, format = "drama") {
         }
         const copy = document.createElement("span");
         copy.className = "metadata-result-copy";
-        copy.innerHTML = `<strong>${e(item.title)}</strong><span>${e(item.description || "No description available")}</span><small>${e(item.channelTitle ? "Uploaded by " + item.channelTitle : item.source)}</small>`;
+        const detailLine = [item.artistNames?.join(", "), item.albumTitle].filter(Boolean).join(" · ");
+        copy.innerHTML = `<strong>${e(item.title)}</strong><span>${e(detailLine || item.description || "No description available")}</span><small>${e(item.channelTitle ? "Uploaded by " + item.channelTitle : item.source)}</small>`;
         button.append(copy);
         button.onclick = async () => {
           button.disabled = true;
